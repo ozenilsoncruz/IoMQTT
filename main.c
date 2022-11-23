@@ -1,24 +1,50 @@
-#include "libs/display.h"
-#include "libs/uart_rasp.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <wiringPi.h>
 
+// Pinos do display LCD
+#define LCD_RS  13
+#define LCD_E   18
+#define LCD_D4  21
+#define LCD_D5  24
+#define LCD_D6  26
+#define LCD_D7  27
+
+// Botões 
+#define PIN_BUTTON1 19
+#define PIN_BUTTON2 23
+#define PIN_BUTTON3 25
 char* msg = "";
 
 int main() {
-    initDisplay();  // inicializa o display lcd
-    write_textLCD("Problema 2 - SD");
-
-    int uart_filestream = uart_config();
-    if(uart_filestream == -1){
-        printf("\nFalha na abertura do arquivo UART!\n");
-        return 0;
+    wiringPiSetupGpio();
+    pinMode(PIN_BUTTON1, INPUT);
+    pinMode(PIN_BUTTON2, INPUT);
+    pinMode(PIN_BUTTON3, INPUT);
+	
+    printf("LED and button pins have beens setup.\n");
+    
+    while (1)
+    {   
+        if (digitalRead(PIN_BUTTON) == HIGH) {
+  	    printf("Botao pressionado!");
+            //digitalWrite(PIN_LED, HIGH);
+        }
+        else {
+	    printf("Botao pressionado!");
+            //digitalWrite(PIN_LED, LOW);
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
-    char sensor[] = "0";
+    /*char sensor[] = "0";
     char opcao = '/';
     do{
         printf("========================================\n");
@@ -81,7 +107,30 @@ int main() {
             default:
                 printf("\n\n\tOpcao invalida!\n\n");
         }
-    } while(opcao != '0');
+    } while(opcao != '0');*/
 
     return 0;
 }
+
+/*
+
+#define PIN_LED 17
+#define PIN_BUTTON 18
+
+int main (int argc, char **argv)
+{
+    
+    printf("LED and button pins have beens setup.\n");
+    
+    while (1)
+    {   
+        if (digitalRead(PIN_BUTTON) == HIGH) {
+            digitalWrite(PIN_LED, HIGH);
+        }
+        else {
+            digitalWrite(PIN_LED, LOW);
+        }
+        
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+}*/
