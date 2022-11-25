@@ -1,22 +1,25 @@
 #include "libs/display.h"
-#include "libs/uart_rasp.h"
+#include "libs/mqtt_sbc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 
-char* msg = "";
+#define MQTT_ADDRESS   "10.0.0.101" // Ip da maquina Brocker
+#define CLIENTID       "sbc"  
+
+#define MQTT_PUBLISH_TOPIC     "sbc/sensores"
+#define MQTT_SUBSCRIBE_TOPIC   "node/+/sensores/#"
 
 int main() {
     initDisplay();  // inicializa o display lcd
     write_textLCD("Problema 2 - SD");
 
-    int uart_filestream = uart_config();
-    if(uart_filestream == -1){
-        printf("\nFalha na abertura do arquivo UART!\n");
-        return 0;
-    }
+    mqtt_config();
+
+    subscribe(MQTT_SUBSCRIBE_TOPIC);
+    
 
     char sensor[] = "0";
     char opcao = '/';
