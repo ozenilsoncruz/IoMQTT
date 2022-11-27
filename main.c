@@ -1,10 +1,9 @@
-#include "libs/display.h"
 #include "libs/mqtt_sbc.h"
+#include "libs/display.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
 
 #define MQTT_ADDRESS   "10.0.0.101" // Ip da maquina Brocker
 #define CLIENTID       "sbc"  
@@ -21,7 +20,7 @@ int main() {
     subscribe(MQTT_SUBSCRIBE_TOPIC);
     
 
-    char sensor[] = "0";
+    /*char sensor[] = "0";
     char opcao = '/';
     do{
         printf("========================================\n");
@@ -84,7 +83,7 @@ int main() {
             default:
                 printf("\n\n\tOpcao invalida!\n\n");
         }
-    } while(opcao != '0');
+    } while(opcao != '0');*/
 
     return 0;
 }
