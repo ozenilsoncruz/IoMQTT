@@ -3,7 +3,11 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include <ESP8266WebServer.h>
-#include <WiFiManager.h> */
+#include <WiFiManager.h> 
+
+https://curtocircuito.com.br/blog/Categoria%20IoT/monitoramento-e-controle-por-aplicativo-mqtt
+http://wiki.foz.ifpr.edu.br/wiki/index.php/MQTT_e_Arduino
+*/
 
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
