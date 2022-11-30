@@ -1,22 +1,37 @@
 #include "libs/mqtt_sbc.h"
 #include "libs/display.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <wiringPi.h>
 
+
+// Botões 
+#define botao_1 19
+#define botao_2 23
+#define botao_3 25
+
+// Configuracoes mqtt
 #define MQTT_ADDRESS   "10.0.0.101" // Ip da maquina Brocker
 #define CLIENTID       "sbc"  
 
+// Topicos
 #define MQTT_PUBLISH_TOPIC     "sbc/sensores"
 #define MQTT_SUBSCRIBE_TOPIC   "node/+/sensores/#"
 
 int main() {
-    initDisplay();  // inicializa o display lcd
-    write_textLCD("Problema 2 - SD");
-
+    wiringPiSetup();
     mqtt_config();
+    initDisplay();  // inicializa o display lcd
 
+    // define os botoes como modo de entrada
+    pinMode(botao_1, INPUT);
+    pinMode(botao_2, INPUT);
+    pinMode(botao_3, INPUT);
+
+    write_textLCD("Problema 3", "Sistemas Digitais");
     subscribe(MQTT_SUBSCRIBE_TOPIC);
     
 
@@ -39,7 +54,7 @@ int main() {
         switch(opcao){
             case '1':
                 uart_send("30", uart_filestream);
-                if(strcmp(uart_receive(uart_filestream, 2), "00") == 0){
+                if(strcmp(MQTT_receive(uart_filestream, 2), "00") == 0){
                     write_textLCD("NodeMCU OK!");
                 }
                 break;

@@ -57,26 +57,32 @@ void subscribe(char* topic){
 }
 
 /**
- * Recebe as mensagens de num dado topico
- * @param contexto ponteiro para nome do topico da mensagem recebida, 
- * @param tamanho do nome do topico
- * @param mensagem - mensagem recebida
+ * Recebe uma mensagem de um topico MQTT
  * 
- * @return 1 sucesso
+ * @return payload - Mensagem recebida pelo topico
 */
-int on_message(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
-    char* payload = message->payload;
+char* MQTT_receive(){
+    /**
+     * Recebe as mensagens de num dado topico
+     * @param contexto ponteiro para nome do topico da mensagem recebida, 
+     * @param tamanho do nome do topico
+     * @param mensagem - mensagem recebida
+     * 
+     * @return 1 sucesso
+    */
+    static char* payload = "";
+    int on_message(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
+        payload = message->payload;
 
-    /* Mostra a mensagem recebida */
-    printf("Mensagem recebida! \n\rTopico: %s Mensagem: %s\n", topicName, payload);
+        /* Mostra a mensagem recebida */
+        printf("Mensagem recebida! \n\rTopico: %s Mensagem: %s\n", topicName, payload);
 
-    /* Faz echo da mensagem recebida */
-    publish(client, MQTT_PUBLISH_TOPIC, payload);
+        MQTTClient_freeMessage(&message);
+        MQTTClient_free(topicName);
 
-    MQTTClient_freeMessage(&message);
-    MQTTClient_free(topicName);
-
-    return 1;
+        return 1;
+    }
+    return payload;
 }
 
 #endif
