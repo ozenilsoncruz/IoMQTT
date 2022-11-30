@@ -1,4 +1,3 @@
-  GNU nano 6.2                                    main.c                                             
 #include "mqtt_sbc.h"
 #include "display.h"
 
