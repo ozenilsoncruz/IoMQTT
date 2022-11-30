@@ -1,3 +1,10 @@
+/*#include <FS.h> 
+#include <DNSServer.h>
+#include <PubSubClient.h>
+#include <ArduinoJson.h>
+#include <ESP8266WebServer.h>
+#include <WiFiManager.h> */
+
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
@@ -19,6 +26,17 @@ IPAddress local_IP(10, 0, 0, 109);
 IPAddress gateway(10, 0, 0, 1);
 IPAddress subnet(255, 255, 0, 0);
 
+// mqtt --------------------------------
+/*WiFiClient espClient;                                 //Instância do WiFiClient
+PubSubClient client(espClient);                       //Passando a instância do WiFiClient para a instância do PubSubClient
+
+#define servidor_mqtt             ""  //URL do servidor MQTT
+#define servidor_mqtt_porta       ""  //Porta do servidor (a mesma deve ser informada na variável abaixo)
+#define servidor_mqtt_usuario     ""  //Usuário
+#define servidor_mqtt_senha       ""  //Senha
+#define mqtt_topico_pub           "esp8266/pincmd"    //Tópico para publicar o comando de inverter o pino do outro ESP8266*/
+
+// --------------------------------
 
 /**
  * Configura a comunicacao com o nodemcu via WIFI
