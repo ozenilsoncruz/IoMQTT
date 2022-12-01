@@ -6,6 +6,8 @@
 #include <string.h>
 #include <MQTTClient.h>
 
+/*https://embarcados.com.br/paho-mqtt-em-c-no-linux-embarcado/*/
+
 // variavel cliente MQTT
 MQTTClient client;
 
