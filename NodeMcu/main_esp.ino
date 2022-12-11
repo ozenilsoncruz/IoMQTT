@@ -4,7 +4,6 @@
 #include <PubSubClient.h>
 #include <WiFiUdp.h>
 
-
 #include <string.h> 
 
 
@@ -22,6 +21,17 @@ IPAddress local_IP(10, 0, 0, 109);
 IPAddress gateway(10, 0, 0, 1);
 IPAddress subnet(255, 255, 0, 0);
 
+// mqtt --------------------------------
+/*WiFiClient espClient;                                 //Instância do WiFiClient
+PubSubClient client(espClient);                       //Passando a instância do WiFiClient para a instância do PubSubClient
+
+#define servidor_mqtt             ""  //URL do servidor MQTT
+#define servidor_mqtt_porta       ""  //Porta do servidor (a mesma deve ser informada na variável abaixo)
+#define servidor_mqtt_usuario     ""  //Usuário
+#define servidor_mqtt_senha       ""  //Senha
+#define mqtt_topico_pub           "esp8266/pincmd"    //Tópico para publicar o comando de inverter o pino do outro ESP8266*/
+
+// --------------------------------
 
 // Definições do servidor MQTT
 const char* BROKER_MQTT = "10.0.0.101";  //URL do broker MQTT 
@@ -101,6 +111,12 @@ void config_connect(){
   Serial.println(WiFi.localIP());
 }
 
+/**
+ * Recebe as mensagens via mqtt 
+ * @param topic - Topico que enviou a mensagem
+ * @param payload - Mensagem recebida
+ * @param length - Tamanho da mensagem
+*/
 void on_message(char* topic, byte* payload, unsigned int length){
     char* msg;
     for(int i = 0; i < length; i++) {

@@ -1,5 +1,5 @@
-#include "libs/mqtt_sbc.h"
-#include "libs/display.h"
+#include "mqtt_sbc.h"
+#include "display.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,62 +39,61 @@ void btn_press(int buttonPin){
   lastButtonState = reading;
 }
 
-
 int main() {
-    wiringPiSetup();
-    mqtt_config();
-    initDisplay();  // inicializa o display lcd
+  wiringPiSetup();
+  mqtt_config();  // configura o mqtt
+  initDisplay();  // inicializa o display lcd
 
-    // define os botoes como modo de entrada
-    pinMode(botao_1, INPUT);
-    pinMode(botao_2, INPUT);
-    pinMode(botao_3, INPUT);
+  // define os botoes como modo de entrada
+  pinMode(botao_1, INPUT);
+  pinMode(botao_2, INPUT);
+  pinMode(botao_3, INPUT);
 
-    write_textLCD("   Problema 3    ", "      MQTT     ");
+  write_textLCD("   Problema 3    ", "      MQTT     ");
+  
+  // teste de botao com debounce
+  while(1){
+    btn_press(botao_1);
+  }
+
+  /*int opcao = 0;
+  do{
+    char* menu[] = {"Situacao NodeMCU", 
+                    "Entrada analogica", 
+                    "Entrada digital", 
+                    "Acender/Apagar LED",
+                    "Sair"};
     
-    // teste de botao com debounce
-    while(1){
-       btn_press(botao_1);
+    if(btn_press(botao_1) == 0  && opcao < 5){
+        opcao = opcao + 1;
     }
 
-    /*int opcao = 0;
-    do{
-        char* menu[] = {"Situacao NodeMCU", 
-                        "Entrada analogica", 
-                        "Entrada digital", 
-                        "Acender/Apagar LED",
-                        "Sair"};
-        
-        if(btn_press(botao_1) == 0  && opcao < 5){
-            opcao = opcao + 1;
-        }
+    if(btn_press(botao_1) == 0 && opcao > 0){
+        opcao = opcao - 1;
+    }
+    
+    // se o botao de enter for pressionado, seleciona a opcao
+    if(btn_press(botao_2) == 0){
+      switch(opcao){
+        case 0:
+          printf("Situacao NodeMCU");
+          break;
+        case 1:
+          printf("Entrada analogica");
+          break;
+        case 2:
+          printf("Entrada digital");
+          break;
+        case 3:
+          printf("Acender/Apagar LED");
+          break;
+        case 4:
+          break;
+        default:
+          printf("\n\n\tOpcao invalida!\n\n");
+      }
+    }
+  } while(opcao != 4);*/
 
-        if(btn_press(botao_1) == 0 && opcao > 0){
-            opcao = opcao - 1;
-        }
-        
-        // se o botao de enter for pressionado, seleciona a opcao
-        if(btn_press(botao_2) == 0){
-            switch(opcao){
-                case 0:
-                    printf("Situacao NodeMCU");
-                    break;
-                case 1:
-                    printf("Entrada analogica");
-                    break;
-                case 2:
-                    printf("Entrada digital");
-                    break;
-                case 3:
-                    printf("Acender/Apagar LED");
-                    break;
-                case 4:
-                    break;
-                default:
-                    printf("\n\n\tOpcao invalida!\n\n");
-            }
-        }
-    } while(opcao != 4);*/
-
-    return 0;
+  return 0;
 }
