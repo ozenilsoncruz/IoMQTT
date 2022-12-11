@@ -1,7 +1,12 @@
+#include <ArduinoOTA.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
+#include <PubSubClient.h>
 #include <WiFiUdp.h>
-#include <ArduinoOTA.h>
+
+
+#include <string.h> 
+
 
 #ifndef STASSID
 #define STASSID "INTELBRAS"
@@ -13,12 +18,28 @@ const char* password = STAPSK;
 
 // Nome do ESP na rede
 const char* host = "ESP-10.0.0.109";
-
-// Definições de rede
 IPAddress local_IP(10, 0, 0, 109);
 IPAddress gateway(10, 0, 0, 1);
 IPAddress subnet(255, 255, 0, 0);
 
+
+// Definições do servidor MQTT
+const char* BROKER_MQTT = "10.0.0.101";  //URL do broker MQTT 
+int BROKER_PORT = 1883;  
+
+// Definições do ID
+#define ID_MQTT "ESP"            // ID desta nodeMCU
+WiFiClient wifiClient;
+PubSubClient MQTT(wifiClient);   // Instancia o Cliente MQTT passando o objeto espClient
+
+// Topicos a serem subescritos
+#define SBC "SBC";
+
+// Topicos a serem publicados
+#define SENSOR_ANALOG "ANALOG_SENSOR";
+#define SENSOR_DIGITAL "DIGITAL_SENSOR";
+#define LED "LED";
+#define STATUS "STATUS";
 
 /**
  * Configura a comunicacao com o nodemcu via WIFI
@@ -80,42 +101,20 @@ void config_connect(){
   Serial.println(WiFi.localIP());
 }
 
-void setup() {
-  // realiza a configuracao inicial para conexao via wifi com nodemcu
-  config_connect();
-  
-  Serial.begin(9600);
+void on_message(char* topic, byte* payload, unsigned int length){
+    char* msg;
+    for(int i = 0; i < length; i++) {
+      char c = (char)payload[i];
+      msg += c;
+    }
 
-  // definicao dos pinos
-  pinMode(LED_BUILTIN, OUTPUT);  
-
-  // Limpa o burffer da porta serial
-  while(Serial.available() > 0){ 
-    Serial.read();
-  }
-  
-  // pisca o led do nodemcu no momento da execucao
-  for(int i=0; i<10; i++){
-    digitalWrite(LED_BUILTIN,LOW);
-    delay(50);
-    digitalWrite(LED_BUILTIN,HIGH);
-    delay(50);
-  }
-
-}
-
-void loop() {
-  ArduinoOTA.handle();
-  
-  if(Serial.available() > 0){ // Retorna o número de bytes (caracteres) 
-                              // disponíveis para leitura da porta serial.
-    String msg = Serial.readString(); // Le uma String
-    
     if(msg[0] == '3'){
-      Serial.print("00");
+      MQTT.publish(STATUS, "00");
     }
     else if(msg[0] == '4'){
-      Serial.print(analogRead(A0));
+      char analog[3];
+      sprintf(analog,"%f",analogRead(A0));
+      MQTT.publish(SENSOR_ANALOG, analog);
     }
     else if(msg[0] == '5'){
       int d;
@@ -145,21 +144,23 @@ void loop() {
           d = D7;
           break;
       }
-      Serial.print(digitalRead(d));
+      char digital[1];
+      sprintf(digital,"%f",digitalRead(A0));
+      MQTT.publish(SENSOR_DIGITAL, digital);
     }
     else if(msg[0] == '6'){
       if(digitalRead(LED_BUILTIN) == HIGH){
         digitalWrite(LED_BUILTIN, LOW);
-        Serial.print("1");
+        MQTT.publish(LED, "1");
       }
       else{
         digitalWrite(LED_BUILTIN, HIGH);
-        Serial.print("0");
+        MQTT.publish(LED, "0");
       }
     }
     else{
       // envia a mensagem de erro
-      Serial.print("1F");
+      MQTT.publish(STATUS, "1F");
       // pisco o led caso a mensagem nao seja reconhecida
       for(int i=0; i<5; i++){
         digitalWrite(LED_BUILTIN,LOW);
@@ -168,5 +169,32 @@ void loop() {
         delay(400);
       }
     }
-  } 
+}
+
+void setup() {
+  // realiza a configuracao inicial para conexao via wifi com nodemcu
+  config_connect();
+  Serial.begin(9600);
+
+  // definicao dos pinos
+  pinMode(LED_BUILTIN, OUTPUT);  
+
+  MQTT.setServer(BROKER_MQTT, BROKER_PORT); 
+  MQTT.setCallback(on_message);
+
+  // pisca o led do nodemcu no momento da execucao
+  for(int i=0; i<10; i++){
+    digitalWrite(LED_BUILTIN,LOW);
+    delay(50);
+    digitalWrite(LED_BUILTIN,HIGH);
+    delay(50);
+  }
+
+  MQTT.subscribe(SBC);
+}
+
+void loop() {
+  ArduinoOTA.handle();
+  
+  MQTT.loop();
 }
