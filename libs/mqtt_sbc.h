@@ -8,9 +8,20 @@
 
 // Configuracoes mqtt
 #define CLIENTID   "sbc"
+//#define BROKER     "mqtt://broker.emqx.io:1883"
 #define BROKER     "tcp://10.0.0.101:1883"
 #define USERNAME   "aluno"
 #define PASSWORD   "@luno*123"
+
+// Topicos a serem publicados
+#define SBC_ESP "sbc/esp"
+#define SBC_IHM "sbc/ihm"
+
+// Topicos a serem publicados
+#define SENSOR_ANALOG "esp/analog_sensor"
+#define SENSOR_DIGITAL "esp/digital_sensor"
+#define LED "esp/led"
+#define STATUS "esp/status"
 
 // variavel cliente MQTT
 MQTTClient client;
@@ -18,32 +29,31 @@ MQTTClient client;
 void publish(MQTTClient client, char* topic, char* payload);
 int on_message(void *context, char *topicName, int topicLen, MQTTClient_message *message);
 
-
+/**
+ * Recebe as mensagens dos topicos inscritos
+ * @param context - 
+ * @param topicName - Nome do topico que mando a mensagem 
+ * @param topicLen  - Tamamnho do nome do topico
+ * @param mensagem - Mensagem recebida
+ */
 int on_message(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
     char* payload = message->payload;
 
     
-    printf("Mensagem recebida! \n\rTopico: %s Mensagem: %s\n", topicName, payload);
+    printf("\n\nMensagem recebida! \n\rTopico: %s Mensagem: %s\n\n\n", topicName, payload);
 
-    /*
-    if(strcmp(topicName,NODE_CONNECTION_STATUS) == 0){
-    	if(strcmp(msg,"0x200") == 0){
-		send(REQUEST,GET_LED_VALUE);
-	}
-    }else if(strcmp(topicName,RESPONSE) == 0){
-    	if(strcmp(msg,"0x03") == 0){
-		ledState = 1;
-	}else if(strcmp(msg,"0x04") == 0){
-		ledState = 0;
-	}
-    }else if(strcmp(topicName,DIGITAL_SENSOR) == 0){
-	char buf[strlen(msg)];
-    	strcpy(buf,msg);
-    	setDigitalValueSensors(buf);
-	updateHistoryList(historyList[nextHistory]);
-    }else if(strcmp(topicName,ANALOG_SENSOR) == 0){
-    	analogValue = msg;
-    }*/
+    if(strcmp(topicName, LED) == 0){
+    	//write_textLCD("   Problema 3    ", "LED");
+        printf("LED");
+	}else if(strcmp(topicName, STATUS) == 0){
+        printf("STATUS");
+    	//write_textLCD("   Problema 3    ", "STATUS");
+	}else if(strcmp(topicName, SENSOR_ANALOG) == 0){
+        printf("Analog");
+        //write_textLCD("   Problema 3    ", "Analog");
+    }else if(strcmp(topicName, SENSOR_DIGITAL) == 0){
+        printf("Digital");
+    }
 
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
@@ -55,24 +65,27 @@ int on_message(void *context, char *topicName, int topicLen, MQTTClient_message 
  * Realiza as configurações iniciais para a comunicacao mqtt
 */
 void mqtt_config(){
-    int rc;
-    MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
-    conn_opts.username = USERNAME;
-    conn_opts.password = PASSWORD;
+    while(!MQTTClient_isConnected(client)){
+        int rc;
+        MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
+        conn_opts.username = USERNAME;
+        conn_opts.password = PASSWORD;
 
-    //Inicializacao do MQTT (conexao & subscribe)
-    MQTTClient_create(&client, BROKER, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
-    conn_opts.keepAliveInterval = 20;
-    conn_opts.cleansession = 1;
+        //Inicializacao do MQTT (conexao & subscribe)
+        MQTTClient_create(&client, BROKER, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+        conn_opts.keepAliveInterval = 20;
+        conn_opts.cleansession = 1;
 
-    // Adiciona msgs 
-    MQTTClient_setCallbacks(client, NULL, NULL, on_message, NULL);
+        // Adiciona msgs 
+        MQTTClient_setCallbacks(client, NULL, mqtt_config, on_message, NULL);
 
-    // Verifica se o cliente mqtt esta conectado
-    if (MQTTClient_connect(client, &conn_opts) != MQTTCLIENT_SUCCESS) {
-        printf("\n\rFalha na conexao ao broker MQTT. Erro: %d\n", rc);
-        exit(-1);
-    }
+        // Verifica se o cliente mqtt esta conectado
+        rc = MQTTClient_connect(client, &conn_opts);
+        if (rc != MQTTCLIENT_SUCCESS) {
+            printf("\n\rFalha na conexao ao broker MQTT. Erro: %d\n", rc);
+            exit(-1);
+        }
+    } 
 }
 
 /**

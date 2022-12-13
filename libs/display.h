@@ -8,8 +8,8 @@
 #include <wiringPi.h>
 
 // Pinos do Display LCD
-#define RS  13  // Register select pin
-#define E   18  // Enable Pin
+#define RS  13
+#define E   18
 #define D4  21
 #define D5  24
 #define D6  26

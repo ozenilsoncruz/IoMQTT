@@ -2,6 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <PubSubClient.h>
+#include <Timer.h>
 #include <WiFiUdp.h>
 
 #include <string.h> 
@@ -16,40 +17,100 @@ const char* ssid = STASSID;
 const char* password = STAPSK;
 
 // Nome do ESP na rede
-const char* host = "ESP-10.0.0.109";
-IPAddress local_IP(10, 0, 0, 109);
+const char* host = "ESP-10.0.0.108";
+IPAddress local_IP(10, 0, 0, 108);
 IPAddress gateway(10, 0, 0, 1);
 IPAddress subnet(255, 255, 0, 0);
 
-// mqtt --------------------------------
-/*WiFiClient espClient;                                 //Instância do WiFiClient
-PubSubClient client(espClient);                       //Passando a instância do WiFiClient para a instância do PubSubClient
-
-#define servidor_mqtt             ""  //URL do servidor MQTT
-#define servidor_mqtt_porta       ""  //Porta do servidor (a mesma deve ser informada na variável abaixo)
-#define servidor_mqtt_usuario     ""  //Usuário
-#define servidor_mqtt_senha       ""  //Senha
-#define mqtt_topico_pub           "esp8266/pincmd"    //Tópico para publicar o comando de inverter o pino do outro ESP8266*/
-
-// --------------------------------
-
 // Definições do servidor MQTT
-const char* BROKER_MQTT = "10.0.0.101";  //URL do broker MQTT 
-int BROKER_PORT = 1883;  
-
+//const char* BROKER_MQTT = "broker.emqx.io";  // broker MQTT 
+const char* BROKER_MQTT = "10.0.0.101";        // broker MQTT 
+int BROKER_PORT = 1883;
+              
 // Definições do ID
-#define ID_MQTT "ESP"            // ID desta nodeMCU
+#define ID_MQTT           "ESP"  // ID desta nodeMCU
+#define USER "aluno"
+#define PASSWORD "@luno*123"
+#define QOS 2  
 WiFiClient wifiClient;
 PubSubClient MQTT(wifiClient);   // Instancia o Cliente MQTT passando o objeto espClient
 
 // Topicos a serem subescritos
-#define SBC "SBC";
+#define SBC_ESP           "sbc/esp"
 
 // Topicos a serem publicados
-#define SENSOR_ANALOG "ANALOG_SENSOR";
-#define SENSOR_DIGITAL "DIGITAL_SENSOR";
-#define LED "LED";
-#define STATUS "STATUS";
+#define SENSORES_D        "esp/sensores_digitais"
+#define SENSORES_A        "esp/sensores_analogicos"
+#define SENSOR_ANALOG     "esp/analog_sensor"
+#define SENSOR_DIGITAL    "esp/digital_sensor"
+#define STATUS            "esp/status"
+#define LED               "esp/led"
+
+// tempo entre as medicoes altomaticas
+int tempo_medicoes = 60;  // padrao 1 minuto
+
+/**
+ * Reconecta-se ao broker Tenta se conectar ao broker constantemente
+ */
+void reconnectMQTT() {
+  while (!MQTT.connected()) {
+    Serial.print("* Tentando se conectar ao Broker MQTT: ");
+    Serial.println(BROKER_MQTT);
+    if (MQTT.connect(ID_MQTT, USER, PASSWORD, SBC_ESP, QOS, false, WILL_MESSAGE)){
+      Serial.println("Conectado com sucesso ao broker MQTT!");
+      MQTT.subscribe(SBC_ESP, 1); 
+    } else{
+      Serial.println("Falha ao reconectar no broker!");
+      Serial.println("\nTentando se conectar em 2s...\n");
+      delay(2000);
+    }
+  }
+}
+
+
+/**
+ * Caso a NodeMCU não esteja conectado ao WiFi, a conexão é restabelecida.
+*/
+void reconnectWiFi() {
+  //se já está conectado a rede WI-FI, nada é feito. 
+  //Caso contrário, são efetuadas tentativas de conexão
+  if (WiFi.status() == WL_CONNECTED)
+    return;
+        
+  WiFi.begin(ssid, password); // Conecta na rede WI-FI
+    
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(100);
+  }
+}
+
+
+/**
+ * Verifica se o cliente está conectado ao broker MQTT e ao WiFi.
+ * Em caso de desconexão, a conexão é restabelecida.
+*/
+void checkMQTTConnection(void) {
+  reconnectWiFi();
+  if (!MQTT.connected()){
+    reconnectMQTT(); //se não há conexão com o Broker, a conexão é refeita
+  } 
+}
+
+
+/**
+ * Realiza as medições dos sensores
+*/
+void medicoes(void){
+  String digitais = {digitalRead(D0), digitalRead(D1), 
+                    digitalRead(D2), digitalRead(D3), 
+                    digitalRead(D4), digitalRead(D5)
+                    digitalRead(D6), digitalRead(D7)};
+                    
+  String analogicos = analogRead(A0);
+  MQTT.publish(SENSORES_D, digitais);   // envia atualizacao para o topico dos sensores digitais
+  MQTT.publish(SENSORES_A, analogicos); // envia atualizacao para o topico dos sensores analogicos
+}
+
 
 /**
  * Configura a comunicacao com o nodemcu via WIFI
@@ -111,6 +172,7 @@ void config_connect(){
   Serial.println(WiFi.localIP());
 }
 
+
 /**
  * Recebe as mensagens via mqtt 
  * @param topic - Topico que enviou a mensagem
@@ -118,22 +180,22 @@ void config_connect(){
  * @param length - Tamanho da mensagem
 */
 void on_message(char* topic, byte* payload, unsigned int length){
-    char* msg;
-    for(int i = 0; i < length; i++) {
-      char c = (char)payload[i];
-      msg += c;
-    }
-
+  char* msg;
+  for(int i = 0; i < length; i++) {
+    char c = (char)payload[i];
+    msg += c;
+  }
+  if(length > 0){
     if(msg[0] == '3'){
       MQTT.publish(STATUS, "00");
     }
     else if(msg[0] == '4'){
-      char analog[3];
+      char analog[] = "";
       sprintf(analog,"%f",analogRead(A0));
       MQTT.publish(SENSOR_ANALOG, analog);
     }
     else if(msg[0] == '5'){
-      int d;
+      int d = D0;
       switch(msg[1]){
         case '1':
           d = D0;
@@ -160,8 +222,8 @@ void on_message(char* topic, byte* payload, unsigned int length){
           d = D7;
           break;
       }
-      char digital[1];
-      sprintf(digital,"%f",digitalRead(A0));
+      char digital[] = "";
+      sprintf(digital,"%f", digitalRead(d));
       MQTT.publish(SENSOR_DIGITAL, digital);
     }
     else if(msg[0] == '6'){
@@ -174,6 +236,12 @@ void on_message(char* topic, byte* payload, unsigned int length){
         MQTT.publish(LED, "0");
       }
     }
+    else if(msg[0] == '7'){
+      // tempo para enviar novas de mensagens
+      tempo_medicoes = (msg[1] - 48) * 10; //Subtrai 48 para obter o valor inteiro e multiplica por 10 para ter o valor em segundos
+      t.stop(0);
+      t.every(tempo_medicoes * 1000, medicoes);
+    }
     else{
       // envia a mensagem de erro
       MQTT.publish(STATUS, "1F");
@@ -185,8 +253,13 @@ void on_message(char* topic, byte* payload, unsigned int length){
         delay(400);
       }
     }
+  }
 }
 
+
+/**
+ * Inicia as configuracoes no momento do upload 
+ */
 void setup() {
   // realiza a configuracao inicial para conexao via wifi com nodemcu
   config_connect();
@@ -195,8 +268,11 @@ void setup() {
   // definicao dos pinos
   pinMode(LED_BUILTIN, OUTPUT);  
 
+  // inicia a comunicacao mqtt
   MQTT.setServer(BROKER_MQTT, BROKER_PORT); 
   MQTT.setCallback(on_message);
+
+  t.every(tempo_medicoes * 1000, medicoes); 
 
   // pisca o led do nodemcu no momento da execucao
   for(int i=0; i<10; i++){
@@ -205,12 +281,18 @@ void setup() {
     digitalWrite(LED_BUILTIN,HIGH);
     delay(50);
   }
-
-  MQTT.subscribe(SBC);
 }
 
+
+/**
+ * Executa um loop 
+ */
 void loop() {
   ArduinoOTA.handle();
   
+  checkMQTTConnection();
+
   MQTT.loop();
+
+  t.update();
 }
