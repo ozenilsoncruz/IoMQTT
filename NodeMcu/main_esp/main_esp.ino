@@ -2,7 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <PubSubClient.h>
-#include <Timer.h>
+//#include <Timer.h>
 #include <WiFiUdp.h>
 
 #include <string.h> 
@@ -56,11 +56,11 @@ void reconnectMQTT() {
   while (!MQTT.connected()) {
     Serial.print("* Tentando se conectar ao Broker MQTT: ");
     Serial.println(BROKER_MQTT);
-    if (MQTT.connect(ID_MQTT, USER, PASSWORD, SBC_ESP, QOS, false, WILL_MESSAGE)){
+    if (MQTT.connect(ID_MQTT, USER, PASSWORD, SBC_ESP, QOS, false, "1F")){
       Serial.println("Conectado com sucesso ao broker MQTT!");
       MQTT.subscribe(SBC_ESP, 1); 
     } else{
-      Serial.println("Falha ao reconectar no broker!");
+      Serial.println("Falha ao se reconectar no broker!");
       Serial.println("\nTentando se conectar em 2s...\n");
       delay(2000);
     }
@@ -100,16 +100,20 @@ void checkMQTTConnection(void) {
 /**
  * Realiza as medições dos sensores
 */
-void medicoes(void){
-  String digitais = {digitalRead(D0), digitalRead(D1), 
-                    digitalRead(D2), digitalRead(D3), 
-                    digitalRead(D4), digitalRead(D5)
-                    digitalRead(D6), digitalRead(D7)};
+/*void medicoes(void){
+  char digitais[8];
+  sprintf(digitais, "%d%d%d%d%d%d%d%d", digitalRead(D0), digitalRead(D1), 
+                                        digitalRead(D2), digitalRead(D3), 
+                                        digitalRead(D2), digitalRead(D3), 
+                                        digitalRead(D2), digitalRead(D3), 
+                                        digitalRead(D4), digitalRead(D5),
+                                        digitalRead(D6), digitalRead(D7));
                     
-  String analogicos = analogRead(A0);
+  char analogicos[6];
+  sprintf(analogicos, "%f", analogRead(A0)); 
   MQTT.publish(SENSORES_D, digitais);   // envia atualizacao para o topico dos sensores digitais
   MQTT.publish(SENSORES_A, analogicos); // envia atualizacao para o topico dos sensores analogicos
-}
+}*/
 
 
 /**
@@ -180,12 +184,12 @@ void config_connect(){
  * @param length - Tamanho da mensagem
 */
 void on_message(char* topic, byte* payload, unsigned int length){
-  char* msg;
-  for(int i = 0; i < length; i++) {
-    char c = (char)payload[i];
-    msg += c;
-  }
+  String msg;
   if(length > 0){
+    for(int i = 0; i < length; i++) {
+      char c = (char)payload[i];
+      msg += c;
+    }
     if(msg[0] == '3'){
       MQTT.publish(STATUS, "00");
     }
@@ -239,8 +243,8 @@ void on_message(char* topic, byte* payload, unsigned int length){
     else if(msg[0] == '7'){
       // tempo para enviar novas de mensagens
       tempo_medicoes = (msg[1] - 48) * 10; //Subtrai 48 para obter o valor inteiro e multiplica por 10 para ter o valor em segundos
-      t.stop(0);
-      t.every(tempo_medicoes * 1000, medicoes);
+      //t.stop(0);
+      //t.every(tempo_medicoes * 1000, medicoes);
     }
     else{
       // envia a mensagem de erro
@@ -272,7 +276,7 @@ void setup() {
   MQTT.setServer(BROKER_MQTT, BROKER_PORT); 
   MQTT.setCallback(on_message);
 
-  t.every(tempo_medicoes * 1000, medicoes); 
+  //t.every(tempo_medicoes * 1000, medicoes); 
 
   // pisca o led do nodemcu no momento da execucao
   for(int i=0; i<10; i++){
@@ -294,5 +298,5 @@ void loop() {
 
   MQTT.loop();
 
-  t.update();
+  //t.update();
 }

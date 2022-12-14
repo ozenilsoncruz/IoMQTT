@@ -1,6 +1,8 @@
 #ifndef MQTT_SBC_H
 #define MQTT_SBC_H
 
+#include "display.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,11 +19,13 @@
 #define SBC_ESP "sbc/esp"
 #define SBC_IHM "sbc/ihm"
 
-// Topicos a serem publicados
-#define SENSOR_ANALOG "esp/analog_sensor"
-#define SENSOR_DIGITAL "esp/digital_sensor"
-#define LED "esp/led"
-#define STATUS "esp/status"
+// Topicos a se inscrever
+#define SENSORES_D        "esp/sensores_digitais"
+#define SENSORES_A        "esp/sensores_analogicos"
+#define SENSOR_ANALOG     "esp/analog_sensor"
+#define SENSOR_DIGITAL    "esp/digital_sensor"
+#define STATUS            "esp/status"
+#define LED               "esp/led"
 
 // variavel cliente MQTT
 MQTTClient client;
@@ -43,16 +47,22 @@ int on_message(void *context, char *topicName, int topicLen, MQTTClient_message 
     printf("\n\nMensagem recebida! \n\rTopico: %s Mensagem: %s\n\n\n", topicName, payload);
 
     if(strcmp(topicName, LED) == 0){
-    	//write_textLCD("   Problema 3    ", "LED");
-        printf("LED");
-	}else if(strcmp(topicName, STATUS) == 0){
-        printf("STATUS");
-    	//write_textLCD("   Problema 3    ", "STATUS");
-	}else if(strcmp(topicName, SENSOR_ANALOG) == 0){
-        printf("Analog");
-        //write_textLCD("   Problema 3    ", "Analog");
-    }else if(strcmp(topicName, SENSOR_DIGITAL) == 0){
-        printf("Digital");
+    	write_textLCD_linha(1, "LED");
+	}
+    else if(strcmp(topicName, STATUS) == 0){
+        write_textLCD_linha(1, "STATUS");
+	}
+    else if(strcmp(topicName, SENSOR_ANALOG) == 0){
+        write_textLCD_linha(1, "Analog");
+    }
+    else if(strcmp(topicName, SENSOR_DIGITAL) == 0){
+        write_textLCD_linha(1, "Digital");
+    }
+    else if(strcmp(topicName, SENSORES_A) == 0){
+        write_textLCD_linha(1, "Analogicos");
+    }
+    else if(strcmp(topicName, SENSORES_D) == 0){
+        write_textLCD_linha(1, "Digitais");
     }
 
     MQTTClient_freeMessage(&message);

@@ -16,17 +16,16 @@
  * Implementa um debounce para verificar se um botao foi ou nao precionado
  * @param buttonPin - Botao a ser verificado
  */
-int btn_press(int buttonPin){
+void btn_press(int buttonPin){
   if(digitalRead(buttonPin) == 0){    // verifica se o botao foi pressionado
-    delay(90);                        // aguarda um tempo
+    delay(30);                        // aguarda um tempo
     if(digitalRead(buttonPin) == 0){  // verifica se o botao continua pressionado
+      write_textLCD_linha(1, "Funciona!!!!");
       while(digitalRead(buttonPin) == 0);  // aguarda no loop ate que o botao pare de ser pressionado
-      return 1;
     }
-    return 0;
   }
-  return 0;
 }
+
 
 int main() {
   wiringPiSetup();
@@ -34,8 +33,10 @@ int main() {
   initDisplay();  // inicializa o display lcd
 
   // Se inscreve nos topicos princiapis
-  increver(SENSOR_ANALOG);
   increver(SENSOR_DIGITAL);
+  increver(SENSOR_ANALOG);
+  increver(SENSORES_D);
+  increver(SENSORES_A);
   increver(STATUS);
   increver(LED);
   
@@ -45,11 +46,10 @@ int main() {
   pinMode(botao_3, INPUT);
 
   write_textLCD("   Problema 3    ", "      MQTT     ");
-
+  
+  printf("Pressione o botão:\n");
   while(1){
-    if(btn_press(botao_1)){
-      printf("Botão pressionado!");
-    }
+    btn_press(botao_1);
   }
 
   /*int opcao = 0;
@@ -91,7 +91,7 @@ int main() {
     }
   } while(opcao != 4);*/
 
-  char *sensor = "0";
+  /*char sensor[] = "0";
   char opcao = '/';
   do{
     printf("========================================\n");
@@ -118,8 +118,8 @@ int main() {
         printf("\nQual sensor digital deseja selecionar? [1-8] \n =>  ");
         scanf("%s", sensor);
         if(sensor[0] >= '1' && sensor[0] <= '8' && strlen(sensor) == 1){
-          char texto[] = "5";
-          sprintf(texto, "%s", sensor);
+          char texto[5];
+	        sprintf(texto, "5%s", sensor);
           publicar(SBC_ESP, texto); // envia o comando e o sensor indicado
         }else{
           printf("\nOpção inválida!\n");
@@ -134,7 +134,7 @@ int main() {
       default:
         printf("\n\n\tOpcao invalida!\n\n");
     }
-  }while(opcao != '0');
+  }while(opcao != '0');*/
 
   return 0;
 }

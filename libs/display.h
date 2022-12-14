@@ -36,6 +36,17 @@ void write_textLCD(char *linha1, char *linha2) {
     lcdPuts(display_lcd, linha2);
 }
 
+/**
+ * Escreve em uma linha do display LCD
+ * @param linha - Linha do display
+ * @param texto - texto a ser escrito no display
+*/
+void write_textLCD_linha(int linha, char *texto) {
+    lcdHome(display_lcd);
+    
+    lcdPosition(display_lcd, 0, linha);
+    lcdPuts(display_lcd, texto);
+}
 
 /**
  * Realiza as rotinas de inicializacao do display
