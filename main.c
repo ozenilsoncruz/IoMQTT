@@ -16,14 +16,15 @@
  * Implementa um debounce para verificar se um botao foi ou nao precionado
  * @param buttonPin - Botao a ser verificado
  */
-void btn_press(int buttonPin){
+int btn_press(int buttonPin){
   if(digitalRead(buttonPin) == 0){    // verifica se o botao foi pressionado
     delay(30);                        // aguarda um tempo
     if(digitalRead(buttonPin) == 0){  // verifica se o botao continua pressionado
-      write_textLCD_linha(1, "Funciona!!!!");
       while(digitalRead(buttonPin) == 0);  // aguarda no loop ate que o botao pare de ser pressionado
+      return 1;
     }
   }
+  return 0;
 }
 
 
@@ -46,50 +47,67 @@ int main() {
   pinMode(botao_3, INPUT);
 
   write_textLCD("   Problema 3    ", "      MQTT     ");
-  
-  printf("Pressione o botão:\n");
-  while(1){
-    btn_press(botao_1);
-  }
+  while(btn_press(botao_2) == 0);
 
-  /*int opcao = 0;
+  int opcao = 0;
+  int sensor;
   do{
-    char* menu[] = {"Situacao NodeMCU", 
-                    "Entrada analogica", 
-                    "Entrada digital", 
-                    "Acender/Apagar LED",
-                    "Sair"};
+    char menu[5][16] =  {"NodeMCU", 
+                         "Analogica", 
+                         "Digital", 
+                         "LED",
+                         "Sair"};
     
-    if(btn_press(botao_1) == 0  && opcao < 5){
-        opcao = opcao + 1;
+    if(btn_press(botao_1) == 1){
+      opcao = opcao + 1;
+      if(opcao > 4){
+        opcao = 0;
+      }
     }
-
-    if(btn_press(botao_1) == 0 && opcao > 0){
-        opcao = opcao - 1;
+    if(btn_press(botao_3) == 1){
+      opcao = opcao - 1;
+      if(opcao < 0){
+        opcao = 4;
+      }
     }
-    
+    write_textLCD_linha(1, menu[opcao]);
     // se o botao de enter for pressionado, seleciona a opcao
-    if(btn_press(botao_2) == 0){
+    if(btn_press(botao_2) == 1){
       switch(opcao){
         case 0:
-          printf("Situacao NodeMCU");
+          publicar(SBC_ESP, "30");
           break;
         case 1:
-          printf("Entrada analogica");
+          publicar(SBC_ESP, "40");
           break;
         case 2:
-          printf("Entrada digital");
+          /*
+          while(btn_press(botao_1) == 0){
+            if(btn_press(botao_3) == 1){
+              sensor = sensor - 1;
+              if(sensor < 0){
+                sensor = 4;
+              }
+            }
+            if(btn_press(botao_2) == 1){
+              char texto[5];
+              sprintf(texto, "5%d", sensor);
+              publicar(SBC_ESP, texto); // envia o comando e o sensor indicado
+            }
+          }
+          */
           break;
         case 3:
-          printf("Acender/Apagar LED");
+          publicar(SBC_ESP, "60");
           break;
         case 4:
+          // tempo
           break;
         default:
           printf("\n\n\tOpcao invalida!\n\n");
       }
     }
-  } while(opcao != 4);*/
+  } while(opcao != 4);
 
   /*char sensor[] = "0";
   char opcao = '/';

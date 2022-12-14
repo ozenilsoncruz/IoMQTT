@@ -195,7 +195,7 @@ void on_message(char* topic, byte* payload, unsigned int length){
     }
     else if(msg[0] == '4'){
       char analog[] = "";
-      sprintf(analog,"%f",analogRead(A0));
+      sprintf(analog,"%d", analogRead(A0));
       MQTT.publish(SENSOR_ANALOG, analog);
     }
     else if(msg[0] == '5'){
@@ -227,7 +227,7 @@ void on_message(char* topic, byte* payload, unsigned int length){
           break;
       }
       char digital[] = "";
-      sprintf(digital,"%f", digitalRead(d));
+      sprintf(digital,"%d", digitalRead(d));
       MQTT.publish(SENSOR_DIGITAL, digital);
     }
     else if(msg[0] == '6'){
