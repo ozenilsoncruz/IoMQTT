@@ -2,7 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <PubSubClient.h>
-//#include <Timer.h>
+#include <Timer.h>
 #include <WiFiUdp.h>
 
 #include <string.h> 
@@ -48,6 +48,7 @@ PubSubClient MQTT(wifiClient);   // Instancia o Cliente MQTT passando o objeto e
 
 // tempo entre as medicoes altomaticas
 int tempo_medicoes = 60;  // padrao 1 minuto
+Timer t;
 
 /**
  * Reconecta-se ao broker Tenta se conectar ao broker constantemente
@@ -100,20 +101,18 @@ void checkMQTTConnection(void) {
 /**
  * Realiza as medições dos sensores
 */
-/*void medicoes(void){
-  char digitais[8];
+void medicoes(void){
+  char digitais[10];
   sprintf(digitais, "%d%d%d%d%d%d%d%d", digitalRead(D0), digitalRead(D1), 
-                                        digitalRead(D2), digitalRead(D3), 
-                                        digitalRead(D2), digitalRead(D3), 
                                         digitalRead(D2), digitalRead(D3), 
                                         digitalRead(D4), digitalRead(D5),
                                         digitalRead(D6), digitalRead(D7));
-                    
+
   char analogicos[6];
-  sprintf(analogicos, "%f", analogRead(A0)); 
+  sprintf(analogicos, "%d", analogRead(A0)); 
   MQTT.publish(SENSORES_D, digitais);   // envia atualizacao para o topico dos sensores digitais
   MQTT.publish(SENSORES_A, analogicos); // envia atualizacao para o topico dos sensores analogicos
-}*/
+}
 
 
 /**
@@ -227,7 +226,7 @@ void on_message(char* topic, byte* payload, unsigned int length){
           break;
       }
       char digital[] = "";
-      sprintf(digital,"%d", digitalRead(d));
+      sprintf(digital,"%c%d", msg[1], digitalRead(d));
       MQTT.publish(SENSOR_DIGITAL, digital);
     }
     else if(msg[0] == '6'){
@@ -242,9 +241,9 @@ void on_message(char* topic, byte* payload, unsigned int length){
     }
     else if(msg[0] == '7'){
       // tempo para enviar novas de mensagens
-      tempo_medicoes = (msg[1] - 48) * 10; //Subtrai 48 para obter o valor inteiro e multiplica por 10 para ter o valor em segundos
-      //t.stop(0);
-      //t.every(tempo_medicoes * 1000, medicoes);
+      tempo_medicoes = (msg[1] - 47) * 10; //Subtrai 48 para obter o valor inteiro e multiplica por 10 para ter o valor em segundos
+      t.stop(0);
+      t.every(tempo_medicoes * 1000, medicoes);
     }
     else{
       // envia a mensagem de erro
@@ -276,7 +275,7 @@ void setup() {
   MQTT.setServer(BROKER_MQTT, BROKER_PORT); 
   MQTT.setCallback(on_message);
 
-  //t.every(tempo_medicoes * 1000, medicoes); 
+  t.every(tempo_medicoes * 1000, medicoes); 
 
   // pisca o led do nodemcu no momento da execucao
   for(int i=0; i<10; i++){
@@ -298,5 +297,5 @@ void loop() {
 
   MQTT.loop();
 
-  //t.update();
+  t.update();
 }

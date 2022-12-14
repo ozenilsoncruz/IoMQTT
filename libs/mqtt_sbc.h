@@ -27,6 +27,22 @@
 #define STATUS            "esp/status"
 #define LED               "esp/led"
 
+/*char digitais[8][10] =   {"00000000", 
+                         "00000000", 
+                         "00000000", 
+                         "00000000",
+                         "00000000",
+                         "00000000", 
+                         "00000000", 
+                         "00000000"};
+
+char analogicos[8][10] = {"00000000", 
+                         "00000000", 
+                         "00000000", 
+                         "00000000",
+                         "00000000",
+                         "00000000"};*/
+
 // variavel cliente MQTT
 MQTTClient client;
 
@@ -47,22 +63,38 @@ int on_message(void *context, char *topicName, int topicLen, MQTTClient_message 
     printf("\n\nMensagem recebida! \n\rTopico: %s Mensagem: %s\n\n\n", topicName, payload);
 
     if(strcmp(topicName, LED) == 0){
-    	write_textLCD_linha(1, "LED");
+        if(strcmp(payload, "1")){
+            write_textLCD("      MQTT     ", "LED: ON");
+        }
+        else if(strcmp(payload, "0")){
+            write_textLCD("      MQTT     ", "LED: OFF");
+        }
 	}
     else if(strcmp(topicName, STATUS) == 0){
-        write_textLCD_linha(1, "STATUS");
+        if(strcmp(payload, "00")){
+            write_textLCD("      MQTT     ", "Status: OK");
+        }
+        else if(strcmp(payload, "1F")){
+            write_textLCD("      MQTT     ", "Status: ERROR");
+        }
 	}
     else if(strcmp(topicName, SENSOR_ANALOG) == 0){
-        write_textLCD_linha(1, "Analog");
+        char texto[30];
+        sprintf(texto, "A1: %s", payload);
+        write_textLCD("Leitura Analogica", texto);
     }
     else if(strcmp(topicName, SENSOR_DIGITAL) == 0){
-        write_textLCD_linha(1, "Digital");
+        char texto[30];
+        sprintf(texto, "D%c: %c", payload[0], payload[1]);
+        write_textLCD("Leitura Digital", texto);
     }
     else if(strcmp(topicName, SENSORES_A) == 0){
-        write_textLCD_linha(1, "Analogicos");
+        //publicar(SBC_IHM, ); // envia o comando e o sensor indicado
+        //write_textLCD(1, "Analogicos");
     }
     else if(strcmp(topicName, SENSORES_D) == 0){
-        write_textLCD_linha(1, "Digitais");
+        //publicar(SBC_IHM, ); // envia o comando e o sensor indicado
+        //write_textLCD(1, "Digitais");
     }
 
     MQTTClient_freeMessage(&message);

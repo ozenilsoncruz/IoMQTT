@@ -65,15 +65,15 @@ int main() {
     }
     
     if(btn_press(botao_1) == 1){
-      opcao++;
-      if(opcao > 5){
+      opcao = opcao + 1;
+      if(opcao > 4){
         opcao = 0;
       }
     }
     if(btn_press(botao_3) == 1){
-      opcao--;
+      opcao = opcao - 1;
       if(opcao < 0){
-        opcao = 5;
+        opcao = 4;
       }
     }
     // se o botao de enter for pressionado, seleciona a opcao
@@ -96,7 +96,7 @@ int main() {
               write_textLCD("Leitura Digital", dig);
             }
             if(btn_press(botao_3) == 1){
-              sensor++;
+              sensor = sensor + 1;
               if(sensor > 8){
                 sensor = 1;
               }
@@ -110,40 +110,25 @@ int main() {
           write_textLCD("      MQTT     ", menu[opcao]);
           break;
         case 3:
-          write_textLCD("Leitura Analogica", "A1");
-          while(btn_press(botao_1) == 0){
-            if(btn_press(botao_2) == 1){
-              publicar(SBC_ESP, "60"); // envia o comando e o sensor indicado
-            }
-          }
-          write_textLCD("      MQTT     ", menu[opcao]);
+          publicar(SBC_ESP, "60");
           break;
         case 4:
-          int tempo_ant = 0;
-          int tempo = 1;
-          while(btn_press(botao_1) == 0){
-            if (tempo_ant != tempo){
-              tempo_ant = tempo;
-              char dig[5];
-              sprintf(dig, "%d", tempo);
-              write_textLCD("Tempo (s): ", dig);
-            }
+          /*while(btn_press(botao_1) == 0){
             if(btn_press(botao_3) == 1){
-              tempo++;
-              if(tempo > 10){
-                tempo = 1;
+              sensor = sensor - 1;
+              if(sensor < 0){
+                sensor = 4;
               }
             }
             if(btn_press(botao_2) == 1){
               char texto[5];
-              sprintf(texto, "7%d", sensor-1);
+              sprintf(texto, "7%d", sensor);
               publicar(SBC_ESP, texto); // envia o comando e o sensor indicado
             }
-          }
-          write_textLCD("      MQTT     ", menu[opcao]);
+          }*/
           break;
         case 5:
-          write_textLCD("Finalizando.....", "");
+          write_textLCD("Finalizando......", "");
           return 0;
           break;
         default:
@@ -151,6 +136,51 @@ int main() {
       }
     }
   } while(opcao != 6);
-  
+
+  /*char sensor[] = "0";
+  char opcao = '/';
+  do{
+    printf("========================================\n");
+    printf("            Escolha uma opcao           \n");
+    printf("----------------------------------------\n");
+    printf("| 1 | Situação atual do NodeMCU\n"); // 0x03
+    printf("| 2 | Valor da entrada analógica\n"); // 0x04
+    printf("| 3 | Valor das entradas digitais\n"); // 0x05
+    printf("| 4 | Acender/Apagar LED\n"); // 0x06
+    printf("| 0 | Sair\n");
+    printf("========================================\n");
+    printf("=>  ");
+    scanf("%s", &opcao);
+    system("cls || clear");
+
+    switch(opcao){
+      case '1': // solicitar status
+        publicar(SBC_ESP, "30");
+        break;
+      case '2': // sensor analogico
+        publicar(SBC_ESP, "40");
+        break;
+      case '3': // sensor digital
+        printf("\nQual sensor digital deseja selecionar? [1-8] \n =>  ");
+        scanf("%s", sensor);
+        if(sensor[0] >= '1' && sensor[0] <= '8' && strlen(sensor) == 1){
+          char texto[5];
+	        sprintf(texto, "5%s", sensor);
+          publicar(SBC_ESP, texto); // envia o comando e o sensor indicado
+        }else{
+          printf("\nOpção inválida!\n");
+        }
+        break;
+      case '4':
+        publicar(SBC_ESP, "60");
+        break;
+      case '0':
+        printf("\n\n\tFinalizando...\n");
+        break;
+      default:
+        printf("\n\n\tOpcao invalida!\n\n");
+    }
+  }while(opcao != '0');*/
+
   return 0;
 }
