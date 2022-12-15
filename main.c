@@ -40,6 +40,7 @@ int main() {
   increver(SENSORES_A);
   increver(STATUS);
   increver(LED);
+  increver(TIME);
   
   // define os botoes como modo de entrada
   pinMode(botao_1, INPUT);
@@ -64,13 +65,13 @@ int main() {
       write_textLCD("      MQTT     ", menu[opcao]);
     }
     
-    if(btn_press(botao_1) == 1){
+    if(btn_press(botao_3) == 1){
       opcao++;
       if(opcao > 5){
         opcao = 0;
       }
     }
-    if(btn_press(botao_3) == 1){
+    if(btn_press(botao_1) == 1){
       opcao--;
       if(opcao < 0){
         opcao = 5;
@@ -83,6 +84,13 @@ int main() {
           publicar(SBC_ESP, "30");
           break;
         case 1:
+          write_textLCD("Leitura Analogica", "A1");
+          while(btn_press(botao_1) == 0){
+            if(btn_press(botao_2) == 1){
+              publicar(SBC_ESP, "40"); // envia o comando e o sensor indicado
+            }
+          }
+          write_textLCD("      MQTT     ", menu[opcao]);
           publicar(SBC_ESP, "40");
           break;
         case 2:
@@ -110,17 +118,34 @@ int main() {
           write_textLCD("      MQTT     ", menu[opcao]);
           break;
         case 3:
-          write_textLCD("Leitura Analogica", "A1");
-          while(btn_press(botao_1) == 0){
-            if(btn_press(botao_2) == 1){
-              publicar(SBC_ESP, "60"); // envia o comando e o sensor indicado
-            }
-          }
-          write_textLCD("      MQTT     ", menu[opcao]);
+          publicar(SBC_ESP, "60"); // envia o comando e o sensor indicado
           break;
         case 4:
+          int sT_ant = 1;
           int tempo_ant = 0;
           int tempo = 1;
+          int sT = 0;
+          char * sTime = "smh";
+          while(btn_press(botao_2) == 0){ // seleciona o intervalo de tempo
+            if (sT_ant != sT){
+              sT_ant = sT;
+              char t[10];
+              sprintf(t, "Tempo (%c)", sTime[sT]);
+              write_textLCD("Escolha o tempo:", t);
+            }
+            if(btn_press(botao_1) == 1){
+              sT--;
+              if(sT > 0){
+                sT = 2;
+              }
+            }
+            if(btn_press(botao_3) == 1){
+              sT++;
+              if(sT > 2){
+                sT = 0;
+              }
+            }
+          }
           while(btn_press(botao_1) == 0){
             if (tempo_ant != tempo){
               tempo_ant = tempo;
@@ -136,7 +161,7 @@ int main() {
             }
             if(btn_press(botao_2) == 1){
               char texto[5];
-              sprintf(texto, "7%d", sensor-1);
+              sprintf(texto, "7%d%c", sensor-1, sTime[sT]);
               publicar(SBC_ESP, texto); // envia o comando e o sensor indicado
             }
           }

@@ -26,6 +26,7 @@
 #define SENSOR_DIGITAL    "esp/digital_sensor"
 #define STATUS            "esp/status"
 #define LED               "esp/led"
+#define TIME               "esp/tempo"
 
 /*char digitais[8][10] =   {"00000000", 
                          "00000000", 

@@ -241,7 +241,19 @@ void on_message(char* topic, byte* payload, unsigned int length){
     }
     else if(msg[0] == '7'){
       // tempo para enviar novas de mensagens
-      tempo_medicoes = (msg[1] - 47) * 10; //Subtrai 48 para obter o valor inteiro e multiplica por 10 para ter o valor em segundos
+      tempo_medicoes = (msg[1] - 47); //Subtrai 48 para obter o valor inteiro e multiplica por 10 para ter o valor em segundos
+      switch (msg[2]) {
+        case 's': 
+          break;
+        case 'm': 
+          tempo_medicoes = tempo_medicoes * 60; // transforma em minuto
+          break;
+        case 'h':
+          tempo_medicoes = tempo_medicoes * 60 * 60; // transforma em hora     
+          break;
+        default:
+          break;
+      }
       t.stop(0);
       t.every(tempo_medicoes * 1000, medicoes);
     }
