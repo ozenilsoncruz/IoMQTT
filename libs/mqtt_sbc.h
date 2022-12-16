@@ -26,23 +26,30 @@
 #define SENSOR_DIGITAL    "esp/digital_sensor"
 #define STATUS            "esp/status"
 #define LED               "esp/led"
-#define TIME               "esp/tempo"
 
-/*char digitais[8][10] =   {"00000000", 
-                         "00000000", 
-                         "00000000", 
-                         "00000000",
-                         "00000000",
-                         "00000000", 
-                         "00000000", 
-                         "00000000"};
+#define IHM_TIME          "imh/tempo"
 
-char analogicos[8][10] = {"00000000", 
-                         "00000000", 
-                         "00000000", 
-                         "00000000",
-                         "00000000",
-                         "00000000"};*/
+/*char dig_history[10][9] =   {"00000000", 
+                            "00000000", 
+                            "00000000", 
+                            "00000000",
+                            "00000000",
+                            "00000000", 
+                            "00000000",
+                            "00000000",
+                            "00000000", 
+                            "00000000"};
+
+char analog_history[10][5] = {"0000", 
+                            "0000", 
+                            "0000", 
+                            "0000",
+                            "0000",
+                            "0000", 
+                            "0000",
+                            "0000",
+                            "0000", 
+                            "0000"};*/
 
 // variavel cliente MQTT
 MQTTClient client;
@@ -90,12 +97,14 @@ int on_message(void *context, char *topicName, int topicLen, MQTTClient_message 
         write_textLCD("Leitura Digital", texto);
     }
     else if(strcmp(topicName, SENSORES_A) == 0){
-        //publicar(SBC_IHM, ); // envia o comando e o sensor indicado
-        //write_textLCD(1, "Analogicos");
+        
+        publicar(SBC_IHM, analog_history); // envia o comando e o sensor indicado
     }
     else if(strcmp(topicName, SENSORES_D) == 0){
-        //publicar(SBC_IHM, ); // envia o comando e o sensor indicado
-        //write_textLCD(1, "Digitais");
+        publicar(SBC_IHM, dig_history); // envia o comando e o sensor indicado
+    }
+    else if(strcmp(topicName, IHM_TIME) == 0){
+        publicar(SBC_ESP, payload);// envia o tempo recebido para nodemcu
     }
 
     MQTTClient_freeMessage(&message);

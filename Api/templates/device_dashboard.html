@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+ 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+</head>
+<!-- <meta http-equiv="refresh" content="5" > -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+<script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+  
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/css/main.css">
+
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+</style>
+
+<body class="w3-light-grey">
+
+  <!-- !PAGE CONTENT! -->
+  <div class="w3-main">
+
+    <!-- Header -->
+    <header class="w3-container" style="display: flex;justify-content: center;"align-items: center;>
+      <h5><b><i class="fa fa-dashboard"></i> Histórico de medições</b></h5>
+    </header>
+
+    <div class="w3-row-padding w3-margin-bottom" style="display: flex;justify-content: center;"align-items: center;>
+      <div class="w3-quarter">
+        <div class="w3-container w3-white w3-hover-shadow w3-border-teal w3-bottombar w3-padding-16">
+          <div class="w3-clear"></div>
+          <h4>Digital</h4>
+        </div>
+      </div>
+      <div class="w3-quarter">
+        <div class="w3-container w3-white w3-hover-shadow w3-border-orange w3-bottombar w3-padding-16">
+          <div class="w3-clear"></div>
+          <h4>Analogico</h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="w3-panel w3-padding-large">
+      <div class="w3-container w3-white w3-card w3-hover-shadow w3-half w3-section w3-round-large">
+          <h3>D1</h3> 
+        <div class="ct-chart ct-series-a ct-major-sixth"></div>
+        </div>
+        
+        <div class="w3-container w3-white w3-card w3-hover-shadow w3-half w3-section w3-round-large">
+          <h3>D2</h3> 
+          <div class="ct-chart ct-series-a ct-major-sixth"></div>
+        </div>
+        
+        <div class="w3-container w3-white w3-card w3-hover-shadow w3-half w3-section w3-round-large">
+          <h3>D3</h3> 
+          <div class="ct2-chart ct-series-b ct-major-sixth"></div>
+        </div>
+
+        <div class="w3-container w3-white w3-card w3-hover-shadow w3-half w3-section w3-round-large">
+          <h3>D4</h3> 
+          <div class="ct2-chart ct-series-b ct-major-sixth"></div>
+        </div>
+
+        <div class="w3-container w3-white w3-card w3-hover-shadow w3-half w3-section w3-round-large">
+          <h3>D5</h3> 
+          <div class="ct-chart ct-series-a ct-major-sixth"></div>
+        </div>
+      
+        <div class="w3-container w3-white w3-card w3-hover-shadow w3-half w3-section w3-round-large">
+          <h3>D6</h3> 
+          <div class="ct-chart ct-series-a ct-major-sixth"></div>
+        </div>
+        
+        <div class="w3-container w3-white w3-card w3-hover-shadow w3-half w3-section w3-round-large">
+          <h3>D7</h3> 
+          <div class="ct2-chart ct-series-b ct-major-sixth"></div>
+        </div>
+
+        <div class="w3-container w3-white w3-card w3-hover-shadow w3-half w3-section w3-round-large">
+          <h3>D8</h3> 
+          <div class="ct2-chart ct-series-b ct-major-sixth"></div>
+        </div>
+    </div>
+      
+  </div>
+
+  <script>
+  // Get the Sidebar
+  var mySidebar = document.getElementById("mySidebar");
+
+  // Get the DIV with overlay effect
+  var overlayBg = document.getElementById("myOverlay");
+
+  // Toggle between showing and hiding the sidebar, and add overlay effect
+  function w3_open() {
+    if (mySidebar.style.display === 'block') {
+      mySidebar.style.display = 'none';
+      overlayBg.style.display = "none";
+    } else {
+      mySidebar.style.display = 'block';
+      overlayBg.style.display = "block";
+    }
+  }
+
+  // Close the sidebar with the close button
+  function w3_close() {
+    mySidebar.style.display = "none";
+    overlayBg.style.display = "none";
+  }
+  </script>
+
+  <script src="/static/JS/main.js"> </script>
+
+</body>
+</html>

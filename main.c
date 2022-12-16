@@ -40,7 +40,7 @@ int main() {
   increver(SENSORES_A);
   increver(STATUS);
   increver(LED);
-  increver(TIME);
+  increver(IHM_TIME);
   
   // define os botoes como modo de entrada
   pinMode(botao_1, INPUT);
@@ -135,7 +135,7 @@ int main() {
             }
             if(btn_press(botao_1) == 1){
               sT--;
-              if(sT > 0){
+              if(sT < 0){
                 sT = 2;
               }
             }
@@ -146,12 +146,20 @@ int main() {
               }
             }
           }
-          while(btn_press(botao_1) == 0){
+          while(btn_press(botao_2) == 0){
             if (tempo_ant != tempo){
               tempo_ant = tempo;
+              char t[10];
               char dig[5];
+              sprintf(t, "Tempo (%c)", sTime[sT]);
               sprintf(dig, "%d", tempo);
-              write_textLCD("Tempo (s): ", dig);
+              write_textLCD(t, dig);
+            }
+            if(btn_press(botao_1) == 1){
+              tempo--;
+              if(tempo < 0){
+                tempo = 10;
+              }
             }
             if(btn_press(botao_3) == 1){
               tempo++;
@@ -159,12 +167,10 @@ int main() {
                 tempo = 1;
               }
             }
-            if(btn_press(botao_2) == 1){
-              char texto[5];
-              sprintf(texto, "7%d%c", sensor-1, sTime[sT]);
-              publicar(SBC_ESP, texto); // envia o comando e o sensor indicado
-            }
           }
+          char texto[5];
+          sprintf(texto, "7%d%c", sensor-1, sTime[sT]);
+          publicar(SBC_ESP, texto); // envia o comando e o sensor indicado
           write_textLCD("      MQTT     ", menu[opcao]);
           break;
         case 5:

@@ -1,2 +1,6 @@
+main = main
+
+all:$(main)
+
 $(main): $(main).c
-        gcc -o $(main) $(main).c -lpaho-mqtt3c -lcrypt -lm -lrt -Wall
+	gcc -o main main.c -lwiringPi -lwiringPiDev -lcrypt -lm -lrt -lpaho-mqtt3c -Wall
