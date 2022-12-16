@@ -66,7 +66,6 @@ int on_message(void *context, char *topicName, int topicLen, MQTTClient_message 
  */
 int on_message(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
     char* payload = message->payload;
-
     
     printf("\n\nMensagem recebida! \n\rTopico: %s Mensagem: %s\n\n\n", topicName, payload);
 
@@ -97,7 +96,6 @@ int on_message(void *context, char *topicName, int topicLen, MQTTClient_message 
         write_textLCD("Leitura Digital", texto);
     }
     else if(strcmp(topicName, SENSORES_A) == 0){
-        
         publicar(SBC_IHM, analog_history); // envia o comando e o sensor indicado
     }
     else if(strcmp(topicName, SENSORES_D) == 0){
@@ -142,7 +140,7 @@ void mqtt_config(){
 
 /**
  * Publica uma mensagem num dado topico
- * @param cleinte - cliente MQTT que publicara o topico
+ * @param cliente - cliente MQTT que publicara o topico
  * @param topico - topico MQTT a ser publicado
  * @param payload - conteudo da mensagem
 */

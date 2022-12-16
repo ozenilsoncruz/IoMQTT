@@ -47,7 +47,7 @@ int main() {
   pinMode(botao_2, INPUT);
   pinMode(botao_3, INPUT);
 
-  write_textLCD("   Problema 3    ", "      MQTT     ");
+  write_textLCD("   Problema 3   ", "      MQTT      ");
   while(btn_press(botao_2) == 0);
 
   int op_ant = 1;
@@ -62,7 +62,7 @@ int main() {
 
     if (op_ant != opcao){
       op_ant = opcao;
-      write_textLCD("      MQTT     ", menu[opcao]);
+      write_textLCD("      MQTT      ", menu[opcao]);
     }
     
     if(btn_press(botao_3) == 1){
