@@ -34,19 +34,70 @@ Finalmente, o SBC também deverá ser utilizado como centralizador das informaç
     <li><a href="https://github.com/ozenilsoncruz">@Ozenilson Cruz</a></li>  <li><a href="https://github.com/traozin">@Antônio Neto</a></li>
 </div>
 
-<details>
-<summary>Manual do Problema</summary>
+##
 
-## Instruções
+<details>
+<-- <summary>Manual do Problema</summary>
+
+</details>
+
+### Requisitos
+
+O hardware usado no teste foi uma Orange Pi e uma NodeMCU ESP-8266
+
+- Orange Pi (5 ???)  
+  - stats orange
+
+- NodeMCU ESP-8266
+  - Módulo NodeMcu Lua ESP-12E
+  - Memória flash: 4 MB
+  - Wireless padrão 802.11 b/g/n
+  - Antena embutida
+  - Suporta 5 conexões TCP/IP
+  - Portas GPIO: 13
+  - D0 (GPIO16) só pode ser usado como entrada ou saída, não suporta outras funções (interrupção, PWM, I2C, etc)
+
+### Instruções
+
+Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua máquina, necessária para comunicação com a NodeMCU. Para isso, siga as instruções do link abaixo:
+
+<details>
+<summary>Configuração do ambiente arduino</summary>
+
+- Siga os passos para fazer a [Instalação do Arduino IDE](https://www.arduino.cc/en/Guide/Windows#toc4).
+- Siga os passos para fazer a [Instalação do Driver da NodeMCU](https://www.blogdarobotica.com/2020/05/26/instalando-driver-serial-para-nodemcu-com-chip-ch340/).
+  
+</details>
+
+##### Após configuração do ambiente, siga os passos abaixo:
+
+1. Baixe o arquivo `main_esp.ino` e faça upload para o NodeMCU.
+2. Em uma Orange Pi, clone o repositório.
+   ```sh
+   git clone https://github.com/traozin/IOInterface
+   ```
+3. Utilizando o terminal, navegue para a pasta do repositório execute os passos abaixo: 
+    1. Compile utilizando o Makefile com o código:
+    ```sh
+        make
+    ```
+    2. Execute com:
+    ```sh
+        sudo ./main
+    ``` 
+          
+
 
 ### Instalação
 
-</details>
+
 
 ## Introdução
 
 ## Metodologia
 
 ## Conclusão
+
+
 
 [^rohde-uart]: Compreender UART - [rohde-schwarz.com](https://www.rohde-schwarz.com/br/produtos/teste-e-medicao/osciloscopios/educational-content/compreender-uart_254524.html)
