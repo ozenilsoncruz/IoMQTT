@@ -31,7 +31,8 @@ Finalmente, o SBC também deverá ser utilizado como centralizador das informaç
 
 ## Autores
 <div align="justify">
-    <li><a href="https://github.com/ozenilsoncruz">@Ozenilson Cruz</a></li>  <li><a href="https://github.com/traozin">@Antônio Neto</a></li>
+    <li><a href="https://github.com/ozenilsoncruz">@Ozenilson Cruz</a></li>  
+    <li><a href="https://github.com/traozin">@Antônio Neto</a></li>
 </div>
 
 ### Requisitos 
@@ -84,17 +85,22 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
     ```sh
         sudo ./main
     ```
-**6.** No computador, navegue para a pasta do repositório e execute os passos abaixo:
-  - Faça as devidas configurações de Broker no arquivo `ihm.py`.
-  - Execute com o comando:
-    ```sh
-        python3 -m pip install -r requirements.txt 
-    ```
-  - Execute o script `ihm.py`:
-    ```sh
-        python3 ihm.py 
-    ```
-</details>
+**6.** Para visualização dos resultados, existem duas formas:
+  - **Visualização no MQTT Explorer**: 
+    - Para a visualização, baixe o [MQTT Explorer](https://mqtt-explorer.com/) e execute os passos abaixo:
+      1. Conecte na mesma rede em que seu Broker estiver em execução.      
+      2. Execute o MQTT Explorer e faça a conexão com o Broker.
+  - **Visualização na IHM**:
+    - Para a visualização, navegue para a pasta do repositório e execute os passos abaixo:
+      1. Faça as devidas configurações de Broker no arquivo `ihm.py`.
+      2. Execute com o comando:
+        ```sh
+            python3 -m pip install -r requirements.txt 
+        ```
+      3. Execute o script `ihm.py`:
+        ```sh
+            python3 ihm.py 
+        ```
 
 ## Introdução
 
