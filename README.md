@@ -63,19 +63,18 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
 
 - Siga os passos para fazer a [Instalação do Arduino IDE](https://www.arduino.cc/en/Guide/Windows#toc4).
 - Siga os passos para fazer a [Instalação do Driver da NodeMCU](https://www.blogdarobotica.com/2020/05/26/instalando-driver-serial-para-nodemcu-com-chip-ch340/).
-  
+- Siga os passos para [Adicionar Bibliotecas na IDE Arduino](https://www.robocore.net/tutoriais/adicionando-bibliotecas-na-ide-arduino#:~:text=Dispon%C3%ADvel%20na%20IDE%20do%20Arduino,Include%20Library). Adicione as bibliotecas [^PubSubClient] [^Timer].
+- Instale as bibliotecas [^wiri] [^paho] na sua SBC.
 </details>
 
 ##### Após configuração do ambiente, siga os passos abaixo:
-
-**1.** Siga os passos para [Adicionar Bibliotecas na IDE Arduino](https://www.robocore.net/tutoriais/adicionando-bibliotecas-na-ide-arduino#:~:text=Dispon%C3%ADvel%20na%20IDE%20do%20Arduino,Include%20Library).
-**2.** Baixe o arquivo `main_esp.ino` e faça upload para o NodeMCU.
-**3.** Faça as devidas configurações de Broker e rede no arquivo `main_esp.ino`.
-**4.** Em uma Orange Pi e em um computador pessoal, clone o repositório.
+**1.** Baixe o arquivo `main_esp.ino` e faça upload para o NodeMCU.
+**2.** Faça as devidas configurações de Broker e rede no arquivo `main_esp.ino`.
+**3.** Em uma Orange Pi e em um computador pessoal, clone o repositório.
    ```sh
    git clone https://github.com/ozenilsoncruz/IoMQTT
    ```
-**5.** Na  Orange Pi utilizando o terminal, navegue para a pasta do repositório e execute os passos abaixo: 
+**4.** Na  Orange Pi utilizando o terminal, navegue para a pasta do repositório e execute os passos abaixo: 
   - Faça as devidas configurações de Broker no arquivo `mqtt_sbc.h`.
   - Compile utilizando o Makefile com o comando:
     ```sh
@@ -85,7 +84,7 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
     ```sh
         sudo ./main
     ```
-**6.** Para visualização dos resultados, existem duas formas:
+**5.** Para visualização dos resultados, existem duas formas:
   - **Visualização no MQTT Explorer**: 
     - Para a visualização, baixe o [MQTT Explorer](https://mqtt-explorer.com/) e execute os passos abaixo:
       1. Conecte na mesma rede em que seu Broker estiver em execução.      
@@ -102,9 +101,7 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
             python3 ihm.py 
         ```
 
-## Metodologia
-
-#### Protocolo MQTT [^MQTT1] [^MQTT2]
+## Protocolo MQTT [^MQTT1] [^MQTT2]
 
 MQTT é um protocolo de mensagens padrão OASIS para a Internet das Coisas (IoT). Ele foi projetado como um transporte de mensagens de publicação/assinatura extremamente leve, ideal para conectar dispositivos remotos com um pequeno volume de código e largura de banda de rede mínima. Hoje, o MQTT é usado em uma ampla variedade de indústrias, como automotiva, manufatura, telecomunicações, petróleo e gás, etc. O formato utilizado no MQTT é de Cliente/Servidor.
 
@@ -135,6 +132,75 @@ De forma simplificada, essa comunicação pode ser dividida entre os seguintes t
 - **Unsubscribe** – permite deixar de assinar um determinado tópico.
 - **Payload** – será o conteúdo da mensagem que será enviada.
 
+### Comunicação MQTT na SBC
+
+
+
+
+### Comunicação MQTT na NodeMCU [^PubSubClient]
+
+Na NodeMCU a comunicação via MQTT foi construida utilizando a biblioteca PubSubClient mo arduino. Os métodos utilizados foram:
+- *publish()*:  Publica uma mensagem no tópico especificado.. 
+- *on_message()*: Recebe as informações e trata os dados recebidos por tópico. Esta função é chamada quando novas mensagens chegam ao cliente.
+- *setCallback()*: Define a função de retorno de chamada da mensagem.
+
+No código abaixo temos um exemplo da utilização de alguns desses métodos. O *publish()* publica a resposta a requisição , *on_message()* é executada continuamente dentro do *setCallback()*.
+
+```cpp
+/**
+ * Recebe as mensagens via mqtt 
+ * @param topic - Topico que enviou a mensagem
+ * @param payload - Mensagem recebida
+ * @param length - Tamanho da mensagem
+*/
+void on_message(char* topic, byte* payload, unsigned int length){
+  String msg;
+  if(length > 0){
+    for(int i = 0; i < length; i++) {
+      char c = (char)payload[i];
+      msg += c;
+    }
+    if(msg[0] == '3'){
+      MQTT.publish(STATUS, "00");
+    }
+...
+}
+
+...
+
+  MQTT.setCallback(on_message);
+
+...
+```
+
+##### Mensagens automáticas na NodeMCU [^Timer]
+
+A NodeMCU envia mensagens automáticamente para sbc em um intervalo de tempo definido. Essa mensagem contém as saídas de todos os sensores e pode ser alterada em um intervalo de 1 a 10 segundos, minutos ou horas.
+
+Para isso, uma biblioteca chamada Timer foi instalada e com ela é possivel definir um intervalo de tempo em que um método especificado será acionado. Abaixo temos um exemplo de sua utilização no código.
+
+```cpp
+
+...
+
+  t.stop(0); // para a execucao do metodo
+  t.every(tempo_medicoes * 1000, medicoes); // seta o novo tempo (em ms) * 1000
+
+...
+```
+
+### Comunicação MQTT na IHM [^PubSubClient]
+
+Para a IHM foi produzida uma API utilizando a linguagem Python com as bibliotecas Flask e Flask MQTT. A API é capaz de gerar receber e enviar dados via MQTT, mas não consegue realizar os devidos tratamentos dos dados para serem exibidos nos gráficos de mais de um sensor. A figura 2 mostra o gráfico com os dados de um sensor digital da interface web desenvolvida.
+
+<p align="center"><img src="assets/grafico.png"/></p>
+<p align="center"> Figura 2. Gráfico da IHM remota </p>
+
+Por esse motivo, um software chamado de MQTT Explorer foi utilizado para gerar gráficos sobre as ultimas medições dos sensores da nodeMCU. A figura 3 mostra a interface do software MQTT explores e como os dados podem ser visualizados em um gráfico.
+
+<p align="center"><img src="assets/mqttex.png"/></p>
+<p align="center"> Figura 3. Interface do MQTT Explorer com gráficos </p>
+
 ## Testes
 
 Para averiguar o funcionamento correto do projeto implementado os seguintes testes foram realizados:
@@ -164,3 +230,13 @@ O código deste projeto é capaz de resolver o problema apresentado utilizando d
 [^nodemcu]: NodeMCU ESP8266-12 V2 Especificações - [robocore.net](https://www.robocore.net/wifi/nodemcu-esp8266-12-v2)
 
 [^orange]: Orange Pi PC Plus - [orangepi.org](http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-PC-Plus.html)
+
+##### Bibliotecas
+---
+[^PubSubClient]: Biblioteca Arduiono PubSubClient - [arduino.cc](https://www.arduino.cc/reference/en/libraries/pubsubclient/)
+
+[^Timer]: Biblioteca Arduiono Timer - [playground.arduino.cc](https://playground.arduino.cc/Code/Timer/#Installation)
+
+[^wiri]: Biblioteca C WiringPi - [wiringpi.com](http://wiringpi.com/)
+
+[^paho]: Biblioteca C Paho MQTT - [github.com/eclipse/paho.mqtt.c](https://github.com/eclipse/paho.mqtt.c/blob/master/src/MQTTClient.h)
