@@ -102,10 +102,8 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
             python3 ihm.py 
         ```
 
-## Introdução
-
 ## Metodologia
- 
+
 #### Protocolo MQTT [^MQTT1] [^MQTT2]
 
 MQTT é um protocolo de mensagens padrão OASIS para a Internet das Coisas (IoT). Ele foi projetado como um transporte de mensagens de publicação/assinatura extremamente leve, ideal para conectar dispositivos remotos com um pequeno volume de código e largura de banda de rede mínima. Hoje, o MQTT é usado em uma ampla variedade de indústrias, como automotiva, manufatura, telecomunicações, petróleo e gás, etc. O formato utilizado no MQTT é de Cliente/Servidor.
