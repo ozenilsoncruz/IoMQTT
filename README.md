@@ -34,11 +34,6 @@ Finalmente, o SBC também deverá ser utilizado como centralizador das informaç
     <li><a href="https://github.com/ozenilsoncruz">@Ozenilson Cruz</a></li>  <li><a href="https://github.com/traozin">@Antônio Neto</a></li>
 </div>
 
-##
-
-<details>
-<summary>Manual do Problema</summary>
-
 ### Requisitos 
 
 O hardware usado no teste foi uma Orange Pi e uma NodeMCU ESP-8266
@@ -93,8 +88,6 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
   ```sh
     sudo /usr/bin/python3 -m pip install -r requirements.txt 
   ```
-    
-</details>
 
 ## Introdução
 
