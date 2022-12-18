@@ -17,8 +17,8 @@ const char* ssid = STASSID;
 const char* password = STAPSK;
 
 // Nome do ESP na rede
-const char* host = "ESP-10.0.0.108";
-IPAddress local_IP(10, 0, 0, 108);
+const char* host = "ESP-10.0.0.107";
+IPAddress local_IP(10, 0, 0, 107);
 IPAddress gateway(10, 0, 0, 1);
 IPAddress subnet(255, 255, 0, 0);
 
@@ -107,10 +107,10 @@ void medicoes(void){
                                         digitalRead(D2), digitalRead(D3), 
                                         digitalRead(D4), digitalRead(D5),
                                         digitalRead(D6), digitalRead(D7));
+  MQTT.publish(SENSORES_D, digitais);   // envia atualizacao para o topico dos sensores digitais
 
   char analogicos[6];
   sprintf(analogicos, "%d", analogRead(A0)); 
-  MQTT.publish(SENSORES_D, digitais);   // envia atualizacao para o topico dos sensores digitais
   MQTT.publish(SENSORES_A, analogicos); // envia atualizacao para o topico dos sensores analogicos
 }
 

@@ -16,7 +16,7 @@
 #define D7  27
 
 int display_lcd;
-
+ 
 
 /**
  * Escreve em duas linhas do display LCD

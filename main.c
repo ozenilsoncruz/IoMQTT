@@ -1,5 +1,5 @@
-#include "display.h"
-#include "mqtt_sbc.h"
+#include "libs/display.h"
+#include "libs/mqtt_sbc.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +12,7 @@
 #define botao_2 23
 #define botao_3 25
 
-/**
+/** 
  * Implementa um debounce para verificar se um botao foi ou nao precionado
  * @param buttonPin - Botao a ser verificado
  */
@@ -27,6 +27,41 @@ int btn_press(int buttonPin){
   return 0;
 }
 
+/**
+ * Navega entre um array de strings e exibe a opcao no display LCD 
+ * @param linha1 - Primeira linha do display
+ * @param opcoes - Array de opcoes que sera percorrido
+ * @param btn_ant - Botao que retorna a opcao
+ * @param btn_ok - Botao que seleciona a opcao
+ * @param btn_prox -Botao que avanca a opcao
+ * @param qtd_op - Quantidade de opcoes do menu 
+ */
+int menu_naviagtion(char *linha1, char opcoes[][], int btn_ant, int btn_ok, int btn_prox, int qtd_op){
+  int op_ant = 1;
+  int op = 0;
+
+  while(btn_press(btn_ok) == 0){
+    if (op_ant != op){            // se a opcao anterior
+      op_ant = op;
+      write_textLCD(linha1, opcoes[op]);
+    }
+
+    if(btn_press(btn_prox) == 1){ // avanca a linha
+      op++;
+      if(op > 5){
+        op = 0;
+      }
+    }
+    if(btn_press(btn_ant) == 1){  // retorna a linha a linha
+      op--;
+      if(op < 0){
+        op = 5;
+      }
+    }
+  }
+  return 1;
+  
+}
 
 int main() {
   wiringPiSetup();
@@ -50,8 +85,6 @@ int main() {
   write_textLCD("   Problema 3   ", "      MQTT      ");
   while(btn_press(botao_2) == 0);
 
-  int op_ant = 1;
-  int opcao = 0;
   do{
     char menu[6][16] =  {"Status", 
                          "Analogica", 
@@ -60,126 +93,56 @@ int main() {
                          "Tempo",
                          "Sair"};
 
-    if (op_ant != opcao){
-      op_ant = opcao;
-      write_textLCD("      MQTT      ", menu[opcao]);
-    }
-    
-    if(btn_press(botao_3) == 1){
-      opcao++;
-      if(opcao > 5){
-        opcao = 0;
-      }
-    }
-    if(btn_press(botao_1) == 1){
-      opcao--;
-      if(opcao < 0){
-        opcao = 5;
-      }
-    }
     // se o botao de enter for pressionado, seleciona a opcao
-    if(btn_press(botao_2) == 1){
-      switch(opcao){
-        case 0:
-          publicar(SBC_ESP, "30");
-          break;
-        case 1:
-          write_textLCD("Leitura Analogica", "A1");
-          while(btn_press(botao_1) == 0){
-            if(btn_press(botao_2) == 1){
-              publicar(SBC_ESP, "40"); // envia o comando e o sensor indicado
-            }
+    
+    int opcao = menu_naviagtion("      MQTT     ", menu, botao_1, botao_2, botao_3, 5);
+    switch(opcao){
+      case 0:
+        publicar(SBC_ESP, "30");
+        break;
+      case 1:
+        write_textLCD("Leitura Analogica", "A1");
+        while(btn_press(botao_1) == 0){
+          if(btn_press(botao_2) == 1){
+            publicar(SBC_ESP, "40"); // envia o comando e o sensor indicado
           }
-          write_textLCD("      MQTT     ", menu[opcao]);
-          publicar(SBC_ESP, "40");
-          break;
-        case 2:
-          int sensor_ant = 0;
-          int sensor = 1;
-          while(btn_press(botao_1) == 0){
-            if (sensor_ant != sensor){
-              sensor_ant = sensor;
-              char dig[5];
-              sprintf(dig, "D%d", sensor);
-              write_textLCD("Leitura Digital", dig);
-            }
-            if(btn_press(botao_3) == 1){
-              sensor++;
-              if(sensor > 8){
-                sensor = 1;
-              }
-            }
-            if(btn_press(botao_2) == 1){
-              char texto[5];
-              sprintf(texto, "5%d", sensor);
-              publicar(SBC_ESP, texto); // envia o comando e o sensor indicado
-            }
-          }
-          write_textLCD("      MQTT     ", menu[opcao]);
-          break;
-        case 3:
-          publicar(SBC_ESP, "60"); // envia o comando e o sensor indicado
-          break;
-        case 4:
-          int sT_ant = 1;
-          int tempo_ant = 0;
-          int tempo = 1;
-          int sT = 0;
-          char * sTime = "smh";
-          while(btn_press(botao_2) == 0){ // seleciona o intervalo de tempo
-            if (sT_ant != sT){
-              sT_ant = sT;
-              char t[10];
-              sprintf(t, "Tempo (%c)", sTime[sT]);
-              write_textLCD("Escolha o tempo:", t);
-            }
-            if(btn_press(botao_1) == 1){
-              sT--;
-              if(sT < 0){
-                sT = 2;
-              }
-            }
-            if(btn_press(botao_3) == 1){
-              sT++;
-              if(sT > 2){
-                sT = 0;
-              }
-            }
-          }
-          while(btn_press(botao_2) == 0){
-            if (tempo_ant != tempo){
-              tempo_ant = tempo;
-              char t[10];
-              char dig[5];
-              sprintf(t, "Tempo (%c)", sTime[sT]);
-              sprintf(dig, "%d", tempo);
-              write_textLCD(t, dig);
-            }
-            if(btn_press(botao_1) == 1){
-              tempo--;
-              if(tempo < 0){
-                tempo = 10;
-              }
-            }
-            if(btn_press(botao_3) == 1){
-              tempo++;
-              if(tempo > 10){
-                tempo = 1;
-              }
-            }
-          }
-          char texto[5];
-          sprintf(texto, "7%d%c", sensor-1, sTime[sT]);
-          publicar(SBC_ESP, texto); // envia o comando e o sensor indicado
-          write_textLCD("      MQTT     ", menu[opcao]);
-          break;
-        case 5:
-          write_textLCD("Finalizando.....", "");
-          return 0;
-          break;
-        default:
-          printf("\n\n\tOpcao invalida!\n\n");
-      }
+        }
+        write_textLCD("      MQTT     ", menu[opcao]);
+        publicar(SBC_ESP, "40");
+        break;
+      case 2:
+        char menu[8][4] = {"D1", "D2", "D3", "D4", "D5", "D6", "D7",  "D8"};
+        int dig = menu_naviagtion("Leitura Digital", sensores, botao_1, botao_2, botao_3, 8);
+        char texto[5];
+        sprintf(texto, "5%d", dig);
+        publicar(SBC_ESP, texto); // envia o comando e o sensor indicado
+        write_textLCD("      MQTT     ", menu[opcao]);
+        break;
+      case 3:
+        publicar(SBC_ESP, "60"); // envia o comando e o sensor indicado
+        break;
+      case 4:
+        char st[3] = "smh"; // tempo em sengundo, minutos ou horas
+
+        //menu para selecionar o intervalo de tempo (em horas, minutos ou segundos)
+        char sTime[3][10] = {"Tempo (s)","Tempo (m)", "Tempo (h)"};
+        int st_int = menu_naviagtion("Intervalo em:", sTime, botao_1, botao_2, botao_3, 2);
+
+        //menu para selecionar o intervalo de tempo em que a esp enviara as atualizacoes
+        char tempo[10][2] = {"1", "2", "3","4", "5", "6", "7","8", "9", "10"};
+        int tempo_int = menu_naviagtion(sTime[st_int], tempo, botao_1, botao_2, botao_3, 10);
+        
+        char texto[5];
+        sprintf(texto, "7%d%s", tempo_int, st[st_int]);
+        publicar(SBC_ESP, texto); // envia o comando e o sensor indicado
+        write_textLCD("      MQTT     ", menu[opcao]);
+        break;
+      case 5:
+        write_textLCD("Finalizando.....", "");
+        return 0;
+        break;
+      default:
+        printf("\n\n\tOpcao invalida!\n\n");
     }
   } while(opcao != 6);
   

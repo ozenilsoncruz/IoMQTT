@@ -73,11 +73,14 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
 ##### Após configuração do ambiente, siga os passos abaixo:
 
 **1.** Baixe o arquivo `main_esp.ino` e faça upload para o NodeMCU.
-**2.** Em uma Orange Pi, clone o repositório.
+**2.** Faça as devidas configurações de Broker e rede no arquivo `main_esp.ino`.
+**3.** Em uma Orange Pi, clone o repositório.
    ```sh
-   git clone https://github.com/traozin/IOInterface
+   git clone https://github.com/ozenilsoncruz/IoMQTT
    ```
+
 **3.** Utilizando o terminal, navegue para a pasta do repositório e execute os passos abaixo: 
+  - Faça as devidas configurações de Broker no arquivo `mqtt_sbc.h`.
   - Compile utilizando o Makefile com o comando:
     ```sh
         make
@@ -86,6 +89,8 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
     ```sh
         sudo ./main
     ```
+**4.** Em um computador
+    sudo /usr/bin/python3 -m pip install -r requirements.txt 
 </details>
 
 ## Introdução
