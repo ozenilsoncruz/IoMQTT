@@ -37,9 +37,7 @@ Finalmente, o SBC também deverá ser utilizado como centralizador das informaç
 ##
 
 <details>
-<-- <summary>Manual do Problema</summary>
-
-</details>
+<summary>Manual do Problema</summary>
 
 ### Requisitos
 
@@ -57,7 +55,7 @@ O hardware usado no teste foi uma Orange Pi e uma NodeMCU ESP-8266
   - Portas GPIO: 13
   - D0 (GPIO16) só pode ser usado como entrada ou saída, não suporta outras funções (interrupção, PWM, I2C, etc)
 
-### Instruções
+### Instruções para instalação
 
 Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua máquina, necessária para comunicação com a NodeMCU. Para isso, siga as instruções do link abaixo:
 
@@ -71,26 +69,21 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
 
 ##### Após configuração do ambiente, siga os passos abaixo:
 
-1. Baixe o arquivo `main_esp.ino` e faça upload para o NodeMCU.
-2. Em uma Orange Pi, clone o repositório.
+**1.** Baixe o arquivo `main_esp.ino` e faça upload para o NodeMCU.
+**2.** Em uma Orange Pi, clone o repositório.
    ```sh
    git clone https://github.com/traozin/IOInterface
    ```
-3. Utilizando o terminal, navegue para a pasta do repositório execute os passos abaixo: 
-    1. Compile utilizando o Makefile com o código:
+**3.** Utilizando o terminal, navegue para a pasta do repositório e execute os passos abaixo: 
+  - Compile utilizando o Makefile com o comando:
     ```sh
         make
     ```
-    2. Execute com:
+  - Execute com o comando:
     ```sh
         sudo ./main
-    ``` 
-          
-
-
-### Instalação
-
-
+    ```
+</details>
 
 ## Introdução
 
