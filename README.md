@@ -69,14 +69,14 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
 
 ##### Após configuração do ambiente, siga os passos abaixo:
 
-**1.** Baixe o arquivo `main_esp.ino` e faça upload para o NodeMCU.
-**2.** Faça as devidas configurações de Broker e rede no arquivo `main_esp.ino`.
-**3.** Em uma Orange Pi, clone o repositório.
+**1.** Siga os passos para [Adicionar Bibliotecas na IDE Arduino](https://www.robocore.net/tutoriais/adicionando-bibliotecas-na-ide-arduino#:~:text=Dispon%C3%ADvel%20na%20IDE%20do%20Arduino,Include%20Library).
+**2.** Baixe o arquivo `main_esp.ino` e faça upload para o NodeMCU.
+**3.** Faça as devidas configurações de Broker e rede no arquivo `main_esp.ino`.
+**4.** Em uma Orange Pi e em um computador pessoal, clone o repositório.
    ```sh
    git clone https://github.com/ozenilsoncruz/IoMQTT
    ```
-
-**3.** Utilizando o terminal, navegue para a pasta do repositório e execute os passos abaixo: 
+**5.** Na  Orange Pi utilizando o terminal, navegue para a pasta do repositório e execute os passos abaixo: 
   - Faça as devidas configurações de Broker no arquivo `mqtt_sbc.h`.
   - Compile utilizando o Makefile com o comando:
     ```sh
@@ -86,16 +86,38 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
     ```sh
         sudo ./main
     ```
-**4.** Em um computador
-    sudo /usr/bin/python3 -m pip install -r requirements.txt 
+**6.** No computador, navegue para a pasta do repositório e execute os passos abaixo:
+  - Faça as devidas configurações de Broker no arquivo `ihm.py`.
+  - Execute com o comando:
+    ```sh
+        python3 -m pip install -r requirements.txt 
+    ```
+  - Execute o script `ihm.py`:
+    ```sh
+        python3 ihm.py 
+    ```
 </details>
 
 ## Introdução
 
 ## Metodologia
 
+## Testes
+
+Para averiguar o funcionamento correto do projeto implementado os seguintes testes foram realizados:
+
+- Solicitação do status da NodeMCU;
+- Envio de uma mensagem não esperada pela NodeMCU;
+- Acendimento e apagamento do LED múltiplas vezes;
+- Verificação da veracidade dos dos dados no histórico;
+- Verificação do intervalo de tempo dos estados dos pinos automaticamente;
+- Solicitação do valor das entradas digitais múltiplas vezes enquanto o valor do pino é alterado;
+- Solicitação do valor da entrada analógica múltiplas vezes enquanto o valor do pino é alterado;
+
+
 ## Conclusão
+Por meio deste projeto, conceitos importantes de comunicação mqtt foram devidamente incorporados e compreendidos para a solução, bem como a utilidade da utilização de microcontroladores para diversos tipos de aplicações.
 
-
+O código deste projeto é capaz de resolver o problema apresentado utilizando de bibliotes nativas das linguagens C e Arduino. Toda via, algumas das soluções podem não apresentar o melhor funcionamento possível pois nem todas foram devidamente testadas.
 
 [^rohde-uart]: Compreender UART - [rohde-schwarz.com](https://www.rohde-schwarz.com/br/produtos/teste-e-medicao/osciloscopios/educational-content/compreender-uart_254524.html)
