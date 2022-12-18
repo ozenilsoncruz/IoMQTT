@@ -266,7 +266,7 @@ Para a IHM foi produzida uma API utilizando a linguagem Python com as biblioteca
 
 Por esse motivo, um software chamado de MQTT Explorer foi utilizado para gerar gráficos sobre as ultimas medições dos sensores da nodeMCU. A figura 3 mostra a interface do software MQTT explores e como os dados podem ser visualizados em um gráfico.
 
-<p align="center"><img src="assets/mqttex.png"/></p>
+<p align="center"><img src="assets/mqttex.png" height="300" width="450"/></p>
 <p align="center"> Figura 3. Interface do MQTT Explorer com gráficos </p>
 
 ## Testes
