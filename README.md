@@ -129,6 +129,9 @@ Por meio deste projeto, conceitos importantes de comunicação serial foram devi
 
 O código deste projeto é capaz de resolver o problema apresentado utilizando de bibliotes nativas das linguagens C e Arduino. Toda via, algumas das soluções podem não apresentar o melhor funcionamento possível e as atualizações que aprimoram o código anterior não foram devidamente testadas.
 
+| :arrow_left: [Problema anterior](https://github.com/traozin/IOInterface) |............................... :arrow_up: [Voltar ao topo](#IoTPlatform) :arrow_up: ...............................| 
+| :----: |-----|
+
 
 [^MQTT1]: Protocolo MQTT: O Que é, Como Funciona e Vantagens - [automacaoindustrial.info](https://www.automacaoindustrial.info/mqtt/l)
 
