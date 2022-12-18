@@ -39,14 +39,17 @@ Finalmente, o SBC também deverá ser utilizado como centralizador das informaç
 <details>
 <summary>Manual do Problema</summary>
 
-### Requisitos
+### Requisitos 
 
 O hardware usado no teste foi uma Orange Pi e uma NodeMCU ESP-8266
 
-- Orange Pi (5 ???)  
-  - stats orange
+- **Orange Pi** [^orange]
+  - CPU - H3 Quad-core Cortex-A7 H.265/HEVC 4K
+  - GPU	- Mali400MP2 GPU @600MHz
+  - Memory (SDRAM)	1GB DDR3 (shared with GPU)
+  - 8GB eMMC Flash
 
-- NodeMCU ESP-8266
+- **NodeMCU ESP-8266** [^nodemcu]
   - Módulo NodeMcu Lua ESP-12E
   - Memória flash: 4 MB
   - Wireless padrão 802.11 b/g/n
@@ -102,6 +105,39 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
 
 ## Metodologia
 
+#### Protocolo MQTT [^MQTT1]
+
+Desenvolvido na década de 90 pela IBM e Eurotech, o MQTT (Message Queuing Telemetry Transport e tendo tradução para português sob o nome de Transporte de Filas de Mensagem de Telemetria) é um protocolo de mensagens que foi criado com o objetivo de oferecer um baixo consumo de rede, banda e também dos demais recursos de software. O formato utilizado no MQTT é de Cliente/Servidor.
+
+Por esse motivo e também por ter fundamentos na pilha TCP/IP ou em outros protocolos de rede, o MQTT tem extrema utilidade dentro da área de desenvolvimento de projetos de comunicação entre máquinas, também conhecido pelo termo M2M (Machine to Machine). Outra área também onde se torna muito presente é para conectividade de IoT (Internet of Things).
+
+#### Como funciona ?
+
+Para funcionar, o Protocolo MQTT utiliza um modelo de Publish/Subscribe onde permite que o cliente faça postagens e/ou capte informações enquanto o servidor irá administrar esse envio e o recebimento dos respectivos dados.
+
+Ou seja, em um MQTT haverá um publicador onde será responsável por publicar as mensagens em um determinado tópico onde um assinante irá inscrever-se neste tópico para poder acessar a mensagem.
+
+Como não há uma conexão direta entre o assinante e o publicador, para que essas mensagens aconteçam, o protocolo MQTT irá precisar de um gerenciador de mensagens chamado de Broker.
+
+#### Formas de comunicação
+
+Em um Protocolo MQTT, a publicação e o recebimento de dados são realizados através de um tipo de servidor chamado de Broker. Ou seja, nessa comunicação haverá então um cliente que terá o papel de Publisher (Publicador) e transmitirá a mensagem, com um tópico de destino e o seu Payload (o conteúdo da mensagem).
+
+Esta mensagem será então encaminhada ao Broker, que se encarregará de gerenciá-la e entregá-la ao Participante que anteriormente se inscreveu no tópico.
+
+Na mesma linha, se um cliente pretender tornar-se subscritor de um tópico, apenas terá de passar o pedido ao Broker, que poderá estabelecer uma ligação entre o cliente e o tópico em questão.
+
+De forma simplificada, essa comunicação pode ser dividida entre os seguintes termos:
+
+- **Subscriber** (Subscrito) – a pessoa que estará inscrita no tópico e irá ter o papel de receptor.
+- **Publisher** (Publicador) – a pessoa que estará responsável por ser o emissor e enviar os dados para um determinado tópico.
+- **Broker** – será o intermediário para fazer uma ponte de comunicação entre o Publisher e o Subscriber, se tornando responsável por fazer o recebimento, enfileiramento e envio das mensagens.
+- **Tópico** –será o endereço pelo qual os dados das mensagens serão enviados.
+- **Client** (Cliente) – será o elemento que terá a capacidade de interagir com o Broker, podendo enviar e receber dados.
+- **Mensagem** – será o pacote de dados trocados entre os clientes e o Broker.
+- **Unsubscribe** – permite deixar de assinar um determinado tópico.
+- **Payload** – será o conteúdo da mensagem que será enviada.
+
 ## Testes
 
 Para averiguar o funcionamento correto do projeto implementado os seguintes testes foram realizados:
@@ -120,4 +156,9 @@ Por meio deste projeto, conceitos importantes de comunicação mqtt foram devida
 
 O código deste projeto é capaz de resolver o problema apresentado utilizando de bibliotes nativas das linguagens C e Arduino. Toda via, algumas das soluções podem não apresentar o melhor funcionamento possível pois nem todas foram devidamente testadas.
 
-[^rohde-uart]: Compreender UART - [rohde-schwarz.com](https://www.rohde-schwarz.com/br/produtos/teste-e-medicao/osciloscopios/educational-content/compreender-uart_254524.html)
+
+[^MQTT1]: Compreender UART - [automacaoindustrial.info](https://www.automacaoindustrial.info/mqtt/l)
+
+[^nodemcu]: NodeMCU ESP8266-12 V2 Especificações - [robocore.net](https://www.robocore.net/wifi/nodemcu-esp8266-12-v2)
+
+[^orange]: Orange Pi PC Plus - [orangepi.org](http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-PC-Plus.html)
