@@ -134,7 +134,71 @@ De forma simplificada, essa comunicação pode ser dividida entre os seguintes t
 
 ### Comunicação MQTT na SBC
 
+A comunicação via MQTT ma SBC foi desenvolvida na linguagem C utilizando a biblioteca Paho MQTT. 
 
+O método *on_message()* é responsável por receber e tratar as mensagens de diferentes tópicos. Cada tópico é responsável por uma função especifica, são elas:
+
+<table class="tg" align= "center">
+<thead>
+  <tr>
+    <th class="tg-amwm">Tópico</th>
+    <th class="tg-amwm">Função<br></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-baqh">esp/analog_sensor</td>
+    <td class="tg-baqh">Recebe o valor da entrada analógica</td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">esp/digital_sensor</td>
+    <td class="tg-baqh">Recebe o valor da entrada digital</td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">esp/led</td>
+    <td class="tg-baqh">Recebe o estado do LED</td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">esp/sensores_analogicos</td>
+    <td class="tg-baqh">Recebe o valor da entrada analógica</td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">esp/sensores_digitais</td>
+    <td class="tg-baqh">Recebe o valor de todas as entradas digitais</td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">esp/status</td>
+    <td class="tg-baqh">Recebe o status da NodeMCU</td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">ihm/tempo</td>
+    <td class="tg-baqh">Recebe o novo tempo para de atualização para NodeMCU</td>
+  </tr>
+</tbody>
+</table>
+<p align="center">Tópicos de resposta para SBC</p>
+
+```c
+/**
+ * Recebe as mensagens dos topicos inscritos
+ * @param context - 
+ * @param topicName - Nome do topico que mando a mensagem 
+ * @param topicLen  - Tamamnho do nome do topico
+ * @param mensagem - Mensagem recebida
+ */
+int on_message(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
+    char* payload = message->payload;
+    
+    printf("\n\nMensagem recebida! \n\rTopico: %s Mensagem: %s\n\n\n", topicName, payload);
+
+    if(strcmp(topicName, LED) == 0){
+        if(strcmp(payload, "1") == 0){
+            write_textLCD("      MQTT     ", "LED: ON");
+        }
+...
+
+}
+```
 
 
 ### Comunicação MQTT na NodeMCU [^PubSubClient]
@@ -189,7 +253,7 @@ Para isso, uma biblioteca chamada Timer foi instalada e com ela é possivel defi
 ...
 ```
 
-### Comunicação MQTT na IHM [^PubSubClient]
+### Comunicação MQTT na IHM
 
 Para a IHM foi produzida uma API utilizando a linguagem Python com as bibliotecas Flask e Flask MQTT. A API é capaz de gerar receber e enviar dados via MQTT, mas não consegue realizar os devidos tratamentos dos dados para serem exibidos nos gráficos de mais de um sensor. A figura 2 mostra o gráfico com os dados de um sensor digital da interface web desenvolvida.
 
@@ -231,8 +295,6 @@ O código deste projeto é capaz de resolver o problema apresentado utilizando d
 
 [^orange]: Orange Pi PC Plus - [orangepi.org](http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-PC-Plus.html)
 
-##### Bibliotecas
----
 [^PubSubClient]: Biblioteca Arduiono PubSubClient - [arduino.cc](https://www.arduino.cc/reference/en/libraries/pubsubclient/)
 
 [^Timer]: Biblioteca Arduiono Timer - [playground.arduino.cc](https://playground.arduino.cc/Code/Timer/#Installation)
