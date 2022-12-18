@@ -132,6 +132,9 @@ De forma simplificada, essa comunicação pode ser dividida entre os seguintes t
 - **Unsubscribe** – permite deixar de assinar um determinado tópico.
 - **Payload** – será o conteúdo da mensagem que será enviada.
 
+<p align="center"><img src="assets/diagrama.png"/></p>
+<p align="center"> Figura 1. Diagrama do projeto</p>
+
 ### Comunicação MQTT na SBC
 
 A comunicação via MQTT ma SBC foi desenvolvida na linguagem C utilizando a biblioteca Paho MQTT. 
@@ -200,6 +203,7 @@ int on_message(void *context, char *topicName, int topicLen, MQTTClient_message 
 }
 ```
 
+Todas as interações na SBC são realizadas por meio de botões e as saídas são exibidas no display LCD.
 
 ### Comunicação MQTT na NodeMCU [^PubSubClient]
 
