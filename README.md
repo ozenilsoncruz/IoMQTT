@@ -34,11 +34,6 @@ Finalmente, o SBC também deverá ser utilizado como centralizador das informaç
     <li><a href="https://github.com/ozenilsoncruz">@Ozenilson Cruz</a></li>  <li><a href="https://github.com/traozin">@Antônio Neto</a></li>
 </div>
 
-##
-
-<details>
-<summary>Manual do Problema</summary>
-
 ### Requisitos 
 
 O hardware usado no teste foi uma Orange Pi e uma NodeMCU ESP-8266
