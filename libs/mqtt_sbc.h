@@ -115,7 +115,6 @@ void publicar_digitais(){
  */
 int on_message(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
     char* payload = message->payload;
-
     
     printf("\n\nMensagem recebida! \n\rTopico: %s Mensagem: %s\n\n\n", topicName, payload);
 
@@ -197,7 +196,7 @@ void mqtt_config(){
 
 /**
  * Publica uma mensagem num dado topico
- * @param cleinte - cliente MQTT que publicara o topico
+ * @param cliente - cliente MQTT que publicara o topico
  * @param topico - topico MQTT a ser publicado
  * @param payload - conteudo da mensagem
 */

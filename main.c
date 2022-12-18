@@ -82,7 +82,7 @@ int main() {
   pinMode(botao_2, INPUT);
   pinMode(botao_3, INPUT);
 
-  write_textLCD("   Problema 3    ", "      MQTT     ");
+  write_textLCD("   Problema 3   ", "      MQTT      ");
   while(btn_press(botao_2) == 0);
 
   do{
