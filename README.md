@@ -67,14 +67,14 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
 
 ##### Após configuração do ambiente, siga os passos abaixo:
 
-**1.** Baixe o arquivo `main_esp.ino` e faça upload para o NodeMCU.
-**2.** Faça as devidas configurações de Broker e rede no arquivo `main_esp.ino`.
-**3.** Em uma Orange Pi, clone o repositório.
+**1.** Siga os passos para [Adicionar Bibliotecas na IDE Arduino](https://www.robocore.net/tutoriais/adicionando-bibliotecas-na-ide-arduino#:~:text=Dispon%C3%ADvel%20na%20IDE%20do%20Arduino,Include%20Library).
+**2.** Baixe o arquivo `main_esp.ino` e faça upload para o NodeMCU.
+**3.** Faça as devidas configurações de Broker e rede no arquivo `main_esp.ino`.
+**4.** Em uma Orange Pi e em um computador pessoal, clone o repositório.
    ```sh
    git clone https://github.com/ozenilsoncruz/IoMQTT
    ```
-
-**3.** Utilizando o terminal, navegue para a pasta do repositório e execute os passos abaixo: 
+**5.** Na  Orange Pi utilizando o terminal, navegue para a pasta do repositório e execute os passos abaixo: 
   - Faça as devidas configurações de Broker no arquivo `mqtt_sbc.h`.
   - Compile utilizando o Makefile com o comando:
     ```sh
@@ -84,18 +84,27 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
     ```sh
         sudo ./main
     ```
-**4.** Em um computador:
-  ```sh
-    sudo /usr/bin/python3 -m pip install -r requirements.txt 
-  ```
+**6.** No computador, navegue para a pasta do repositório e execute os passos abaixo:
+  - Faça as devidas configurações de Broker no arquivo `ihm.py`.
+  - Execute com o comando:
+    ```sh
+        python3 -m pip install -r requirements.txt 
+    ```
+  - Execute o script `ihm.py`:
+    ```sh
+        python3 ihm.py 
+    ```
+</details>
 
 ## Introdução
 
 ## Metodologia
 
-#### Protocolo MQTT [^MQTT1] [^MQTT2]
+#### Protocolo MQTT [^MQTT1]
 
-MQTT é um protocolo de mensagens padrão OASIS para a Internet das Coisas (IoT). Ele foi projetado como um transporte de mensagens de publicação/assinatura extremamente leve, ideal para conectar dispositivos remotos com um pequeno volume de código e largura de banda de rede mínima. Hoje, o MQTT é usado em uma ampla variedade de indústrias, como automotiva, manufatura, telecomunicações, petróleo e gás, etc. O formato utilizado no MQTT é de Cliente/Servidor.
+Desenvolvido na década de 90 pela IBM e Eurotech, o MQTT (Message Queuing Telemetry Transport e tendo tradução para português sob o nome de Transporte de Filas de Mensagem de Telemetria) é um protocolo de mensagens que foi criado com o objetivo de oferecer um baixo consumo de rede, banda e também dos demais recursos de software. O formato utilizado no MQTT é de Cliente/Servidor.
+
+Por esse motivo e também por ter fundamentos na pilha TCP/IP ou em outros protocolos de rede, o MQTT tem extrema utilidade dentro da área de desenvolvimento de projetos de comunicação entre máquinas, também conhecido pelo termo M2M (Machine to Machine). Outra área também onde se torna muito presente é para conectividade de IoT (Internet of Things).
 
 #### Como funciona ?
 
@@ -124,18 +133,29 @@ De forma simplificada, essa comunicação pode ser dividida entre os seguintes t
 - **Unsubscribe** – permite deixar de assinar um determinado tópico.
 - **Payload** – será o conteúdo da mensagem que será enviada.
 
-## Conclusão
-Por meio deste projeto, conceitos importantes de comunicação serial foram devidamente incorporados e compreendidos para a solução, bem como a utilidade da utilização de microcontroladores para diversos tipos de aplicações.
+## Testes
 
-O código deste projeto é capaz de resolver o problema apresentado utilizando de bibliotes nativas das linguagens C e Arduino. Toda via, algumas das soluções podem não apresentar o melhor funcionamento possível e as atualizações que aprimoram o código anterior não foram devidamente testadas.
+Para averiguar o funcionamento correto do projeto implementado os seguintes testes foram realizados:
+
+- Solicitação do status da NodeMCU;
+- Envio de uma mensagem não esperada pela NodeMCU;
+- Acendimento e apagamento do LED múltiplas vezes;
+- Verificação da veracidade dos dos dados no histórico;
+- Verificação do intervalo de tempo dos estados dos pinos automaticamente;
+- Solicitação do valor das entradas digitais múltiplas vezes enquanto o valor do pino é alterado;
+- Solicitação do valor da entrada analógica múltiplas vezes enquanto o valor do pino é alterado;
+
+
+## Conclusão
+Por meio deste projeto, conceitos importantes de comunicação mqtt foram devidamente incorporados e compreendidos para a solução, bem como a utilidade da utilização de microcontroladores para diversos tipos de aplicações. 
+
+O código deste projeto é capaz de resolver o problema apresentado utilizando de bibliotes nativas das linguagens C e Arduino. Toda via, algumas das soluções podem não apresentar o melhor funcionamento possível pois nem todas foram devidamente testadas.
 
 | :arrow_left: [Problema anterior](https://github.com/traozin/IOInterface) |............................... :arrow_up: [Voltar ao topo](#IoTPlatform) :arrow_up: ...............................| 
 | :----: |-----|
 
 
-[^MQTT1]: Protocolo MQTT: O Que é, Como Funciona e Vantagens - [automacaoindustrial.info](https://www.automacaoindustrial.info/mqtt/l)
-
-[^MQTT2]: MQTT: The Standard for IoT Messaging - [mqtt.org](https://mqtt.org/)
+[^MQTT1]: Compreender UART - [automacaoindustrial.info](https://www.automacaoindustrial.info/mqtt/l)
 
 [^nodemcu]: NodeMCU ESP8266-12 V2 Especificações - [robocore.net](https://www.robocore.net/wifi/nodemcu-esp8266-12-v2)
 
