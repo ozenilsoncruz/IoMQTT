@@ -149,7 +149,7 @@ Por meio deste projeto, conceitos importantes de comunicação mqtt foram devida
 
 O código deste projeto é capaz de resolver o problema apresentado utilizando de bibliotes nativas das linguagens C e Arduino. Toda via, algumas das soluções podem não apresentar o melhor funcionamento possível pois nem todas foram devidamente testadas.
 
-| :arrow_left: [Problema anterior](https://github.com/traozin/IOInterface) |.................................................................................. :arrow_up: [Voltar ao topo](#IoTPlatform) :arrow_up: ..................................................................................| 
+| :arrow_left: [Problema anterior](https://github.com/traozin/IOInterface) |.......................................................................... :arrow_up: [Voltar ao topo](#IoTPlatform) :arrow_up: ..........................................................................| 
 | :----: |-----|
 
 
