@@ -6,8 +6,9 @@ function getdevice(){
         var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
         var dados = document.getElementById('dados').value;
         var dados = JSON.parse(dados)
-        var digitais = []
 
+        var digitais = dados['d']
+        var analogico = dados['a']
         for(var i = 1; i < 9; i++){
             var d = document.getElementById(String(i));
             //temperature chart object created 
@@ -35,7 +36,7 @@ function getdevice(){
                 }
             });
             
-            addData(d_card, time, dados[String(i)]);
+            addData(d_card, time, digitais[String(i)]);
             if (couter >= 10 ){
                 removeData(d_card);
             }

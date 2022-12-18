@@ -27,35 +27,84 @@
 #define STATUS            "esp/status"
 #define LED               "esp/led"
 
-#define IHM_TIME          "imh/tempo"
+#define IHM_TIME          "ihm/tempo"
 
-/*char dig_history[10][9] =   {"00000000", 
-                            "00000000", 
-                            "00000000", 
-                            "00000000",
-                            "00000000",
-                            "00000000", 
-                            "00000000",
-                            "00000000",
-                            "00000000", 
-                            "00000000"};
-
-char analog_history[10][5] = {"0000", 
-                            "0000", 
-                            "0000", 
-                            "0000",
-                            "0000",
-                            "0000", 
-                            "0000",
-                            "0000",
-                            "0000", 
-                            "0000"};*/
+// variaveis que armazenam os historicos de atualizacao
+int dig_history1[10] =  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+int dig_history2[10] =  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+int dig_history3[10] =  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+int dig_history4[10] =  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+int dig_history5[10] =  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+int dig_history6[10] =  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+int dig_history7[10] =  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+int dig_history8[10] =  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+ 
+int anag_history[10] =  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 // variavel cliente MQTT
 MQTTClient client;
 
 void publish(MQTTClient client, char* topic, char* payload);
 int on_message(void *context, char *topicName, int topicLen, MQTTClient_message *message);
+
+
+
+/**
+ * Publica uma mensagem em um dado topico
+ * @param topic - Topico da mensagem a ser publicada
+ * @param payload - Mensagem a ser enviada
+ */
+void publicar(char* topic, char* payload){
+   publish(client, topic, payload);
+}
+
+void atualiza_historico(int *historico, int valor){
+    for(int i = 0; i < 10; i++){
+        historico[i] = historico[i + 1];
+    }
+    historico[0] = valor;
+}
+
+void atualiza_digitais(int valor[]){
+    atualiza_historico(dig_history1, valor[0]);
+    atualiza_historico(dig_history2, valor[1]);
+    atualiza_historico(dig_history3, valor[2]);
+    atualiza_historico(dig_history4, valor[3]);
+    atualiza_historico(dig_history5, valor[4]);
+    atualiza_historico(dig_history6, valor[5]);
+    atualiza_historico(dig_history7, valor[6]);
+    atualiza_historico(dig_history8, valor[7]);
+}
+
+int stringToInt(char *string){
+    int number = 0;
+    for(int i = 0; i<strlen(string); i++){
+        number = number * 10 + (string[i] - '0');
+    }
+    return number;
+}
+
+void publicar_historico(int *historico, char* sensor){
+    for(int i = 0; i < strlen(sensor); i++){
+        char d[15]; 
+        sprintf(d, "%d", historico[i]);
+        char *a = d;
+        char newTopic[30];
+        sprintf(newTopic, "%s/%s", SBC_IHM, sensor);
+        publicar(newTopic, a);
+    }
+}
+
+void publicar_digitais(){
+    publicar_historico(dig_history1, "D/1");
+    publicar_historico(dig_history2, "D/2");
+    publicar_historico(dig_history3, "D/3");
+    publicar_historico(dig_history4, "D/4");
+    publicar_historico(dig_history5, "D/5");
+    publicar_historico(dig_history6, "D/6");
+    publicar_historico(dig_history7, "D/7");
+    publicar_historico(dig_history8, "D/8");
+}
 
 /**
  * Recebe as mensagens dos topicos inscritos
@@ -71,18 +120,18 @@ int on_message(void *context, char *topicName, int topicLen, MQTTClient_message 
     printf("\n\nMensagem recebida! \n\rTopico: %s Mensagem: %s\n\n\n", topicName, payload);
 
     if(strcmp(topicName, LED) == 0){
-        if(strcmp(payload, "1")){
+        if(strcmp(payload, "1") == 0){
             write_textLCD("      MQTT     ", "LED: ON");
         }
-        else if(strcmp(payload, "0")){
+        else if(strcmp(payload, "0")  == 0){
             write_textLCD("      MQTT     ", "LED: OFF");
         }
 	}
     else if(strcmp(topicName, STATUS) == 0){
-        if(strcmp(payload, "00")){
-            write_textLCD("      MQTT     ", "Status: OK");
+        if(strcmp(payload, "00")  == 0){
+            write_textLCD("      MQTT     ", "Status:OK");
         }
-        else if(strcmp(payload, "1F")){
+        else if(strcmp(payload, "1F") == 0){
             write_textLCD("      MQTT     ", "Status: ERROR");
         }
 	}
@@ -97,14 +146,20 @@ int on_message(void *context, char *topicName, int topicLen, MQTTClient_message 
         write_textLCD("Leitura Digital", texto);
     }
     else if(strcmp(topicName, SENSORES_A) == 0){
-        
-        publicar(SBC_IHM, analog_history); // envia o comando e o sensor indicado
+        int valor = stringToInt(payload);
+        atualiza_historico(anag_history, valor);
+        publicar_historico(anag_history, "A/1");
     }
     else if(strcmp(topicName, SENSORES_D) == 0){
-        publicar(SBC_IHM, dig_history); // envia o comando e o sensor indicado
+        int valor[8];
+        for(int i = 0; i < 8; i++){
+            valor[i] = payload[0] - '0';
+        }
+        atualiza_digitais(valor);
+        publicar_digitais(); // envia o comando e o sensor indicado
     }
     else if(strcmp(topicName, IHM_TIME) == 0){
-        publicar(SBC_ESP, payload);// envia o tempo recebido para nodemcu
+        publicar(SBC_ESP, payload);      // envia o tempo recebido para nodemcu
     }
 
     MQTTClient_freeMessage(&message);
@@ -163,15 +218,6 @@ void publish(MQTTClient client, char* topic, char* payload) {
 */
 void increver(char* topic){
     MQTTClient_subscribe(client, topic, 0);
-}
-
-/**
- * Publica uma mensagem em um dado topico
- * @param topic - Topico da mensagem a ser publicada
- * @param payload - Mensagem a ser enviada
- */
-void publicar(char* topic, char* payload){
-   publish(client, topic, payload);
 }
 
 #endif
