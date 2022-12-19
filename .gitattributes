@@ -1,9 +1,3 @@
-IoMQTT/* linguist-vendored
+Api/* linguist-vendored
 
-# Bootstrap css and js
-- (^|/)bootstrap([^/.]*)(?=\.).*\.(js|css|less|scss|styl)$
-- (^|/)custom\.bootstrap([^\s]*)(js|css|less|scss|styl)$
 
-# Font Awesome
-- (^|/)font-?awesome\.(css|less|scss|styl)$
-- (^|/)font-?awesome/.*\.(css|less|scss|styl)$
