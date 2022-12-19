@@ -69,7 +69,9 @@ Esse projeto necessita que o usuário tenha a IDE do Arduino instalada em sua m�
 
 ##### Após configuração do ambiente, siga os passos abaixo:
 **1.** Baixe o arquivo `main_esp.ino` e faça upload para o NodeMCU.
+
 **2.** Faça as devidas configurações de Broker e rede no arquivo `main_esp.ino`.
+
 **3.** Em uma Orange Pi e em um computador pessoal, clone o repositório.
    ```sh
    git clone https://github.com/ozenilsoncruz/IoMQTT
@@ -287,7 +289,7 @@ Por meio deste projeto, conceitos importantes de comunicação mqtt foram devida
 
 O código deste projeto é capaz de resolver o problema apresentado utilizando de bibliotes nativas das linguagens C e Arduino. Toda via, algumas das soluções podem não apresentar o melhor funcionamento possível pois nem todas foram devidamente testadas.
 
-| :arrow_left: [Problema anterior](https://github.com/traozin/IOInterface) |.............................................. :arrow_up: [Voltar ao topo](#IoTPlatform) :arrow_up: .............................................| 
+| :arrow_left: [Problema anterior](https://github.com/traozin/IOInterface) |...........................................................  :arrow_up: [Voltar ao topo](#IoTPlatform) :arrow_up: ........................................................... | 
 | :----: |-----|
 
 
