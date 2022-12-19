@@ -1,1 +1,9 @@
 IoMQTT/* linguist-vendored
+
+# Bootstrap css and js
+(^|/)bootstrap([^/.]*)(?=\.).*\.(js|css|less|scss|styl)$/* linguist-vendored
+(^|/)custom\.bootstrap([^\s]*)(js|css|less|scss|styl)$/* linguist-vendored
+
+# Font Awesome
+(^|/)font-?awesome\.(css|less|scss|styl)$/* linguist-vendored
+(^|/)font-?awesome/.*\.(css|less|scss|styl)$/* linguist-vendored
